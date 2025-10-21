@@ -56,6 +56,8 @@ while (keepPlaying)
             Console.WriteLine("  look - Look around the area");
             Console.WriteLine("  look [item] - Look at specific item");
             Console.WriteLine("  go [direction] - Move to connected area");
+            Console.WriteLine("  get [item] - Pick up an item");
+            Console.WriteLine("  inventory - Show your items");
             Console.WriteLine("  help - Show this help");
             Console.WriteLine("  quit - Exit game");
             break;
@@ -74,6 +76,39 @@ while (keepPlaying)
             else
             {
                 Console.WriteLine($"You can't go '{argument}' from here.");
+            }
+            break;
+        
+        case "inventory":
+            if (player.Inventory.Count == 0)
+            {
+                Console.WriteLine("Your inventory is empty.");
+            }
+            else
+            {
+                Console.WriteLine("You are carrying:");
+                foreach (var item in player.Inventory)
+                {
+                    Console.WriteLine($"  {item.Name} ({item.Weight} lbs)");
+                }
+            }
+            break;
+        
+        case "get":
+            if (string.IsNullOrWhiteSpace(argument))
+            {
+                Console.WriteLine("Get what? Try 'get [item]'");
+            }
+            else if (currentArea.Items.TryGetValue(argument, out var item))
+            {
+                // Remove item from area and add to player inventory
+                currentArea.Items.Remove(argument);
+                player.Inventory.Add(item);
+                Console.WriteLine($"You pick up the {item.Name}.");
+            }
+            else
+            {
+                Console.WriteLine($"There is no '{argument}' here to pick up.");
             }
             break;
 

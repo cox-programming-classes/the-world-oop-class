@@ -1,3 +1,4 @@
+using The_World.GameData.Items;
 namespace The_World.GameData;
 
 /// <summary>
@@ -21,6 +22,11 @@ public record Player(
     /// <param name="exp">Experience gained</param>
     public void AddExperience(double exp) =>
         Level += exp;
+    /// <summary>
+    /// The Player's inventory of items they've collected.
+    /// </summary>
+    public List<Item> Inventory { get; private set; } = [];
+
     
     /*
      * TODO:  Stats management (level up increases stats?)
