@@ -1,6 +1,4 @@
-using The_World.GameData.Creatures;
-
-namespace The_World.GameData.GameMechanics;
+namespace The_World.GameData.Creatures;
 
 /// <summary>
 /// Creates common Creature archetypes for reuse.
