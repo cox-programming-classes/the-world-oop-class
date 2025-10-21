@@ -1,5 +1,6 @@
 using The_World.GameData.Areas;
 using The_World.GameData.Creatures;
+using The_World.GameData.Items;
 
 namespace The_World.GameData.GameMechanics;
 
@@ -10,26 +11,60 @@ public class WorldBuilder
     /// </summary>
     /// <returns></returns>
     public static Area BuildWorld()
-    {
-        var startingArea = AreaBuilder
-            .FromName("Dark Forest")
-            .WithDescription("A gloomy forest filled with towering trees and eerie sounds.")
-            .WithCreature(
-                "goblin_1",
-                BuildGoblinArchetype())
-            .WithCreature(
-                "goblin_2",
-                BuildGoblinArchetype("Goblin Scout", "A nimble goblin with keen eyes, always on the lookout for intruders."))
-            .WithCreature(
-                "boss_goblin",
-                BuildGoblinArchetype("Goblin Warrior", "A fierce goblin clad in makeshift armor, wielding a crude weapon.", 2))
-            .WithItem("rusty_sword", 
-                new("Rusty Sword", "An old and worn sword, still sharp enough to be dangerous.", 3.5))
-            .Build();
-        
-        
-        return startingArea;
-    }
+{
+    // Create all areas first (without connections)
+    var forestArea = AreaBuilder
+        .FromName("Dark Forest")
+        .WithDescription("A gloomy forest filled with towering trees and eerie sounds. You notice a hole in the ground leading downward.")
+        .WithCreature("goblin_1", BuildGoblinArchetype())
+        .WithItem("rusty_sword", 
+            new Item("Rusty Sword", "An old and worn sword, still sharp enough to be dangerous.", 3.5))
+        .Build();
+
+    var caveArea = AreaBuilder
+        .FromName("Mountain Cave") 
+        .WithDescription("A dark, damp cave with three passages: a hole above leading up, an exit to the east, and a steep climb upward to the west.")
+        .WithCreature("cave_bat", BuildGoblinArchetype("Giant Bat", "A large bat with leathery wings.", 2))
+        .WithItem("glowing_crystal", 
+            new Item("Glowing Crystal", "A mysterious crystal that emits a soft blue light.", 1.0))
+        .Build();
+
+    var fieldArea = AreaBuilder
+        .FromName("Open Field")
+        .WithDescription("A vast field of tall grass swaying in the breeze. To the west, you see the entrance to a cave.")
+        .WithItem("healing_herb", 
+            new Item("Healing Herb", "A small herb known for its medicinal properties.", 0.2))
+        .Build();
+
+    var dungeonArea = AreaBuilder
+        .FromName("Ancient Dungeon")
+        .WithDescription("A stone dungeon with moss-covered walls. You can climb down to return to the cave below.")
+        .WithCreature("dungeon_guard", 
+            BuildGoblinArchetype("Skeleton Warrior", "An ancient skeleton in rusted armor.", 3))
+        .Build();
+
+    // Now connect them all - this creates the bidirectional links
+    // TODO: Notice we rebuild each area to add connections
+    forestArea = AreaBuilder.FromArea(forestArea)
+        .WithConnectedArea("down", caveArea)  // hole leads down to cave
+        .Build();
+
+    caveArea = AreaBuilder.FromArea(caveArea)
+        .WithConnectedArea("up", forestArea)     // hole leads up to forest  
+        .WithConnectedArea("east", fieldArea)    // exit leads to field
+        .WithConnectedArea("climb", dungeonArea) // climb up to dungeon
+        .Build();
+
+    fieldArea = AreaBuilder.FromArea(fieldArea)
+        .WithConnectedArea("west", caveArea)     // back to cave
+        .Build();
+
+    dungeonArea = AreaBuilder.FromArea(dungeonArea)
+        .WithConnectedArea("down", caveArea)     // climb down to cave
+        .Build();
+
+    return forestArea; // Start in the forest
+}
     
     /// <summary>
     /// Helper method to build a Goblin creature archetype.
@@ -46,8 +81,8 @@ public class WorldBuilder
         return Creature.CreateNewCreature(
             name,
             description,
-            new(10+(2*level), 0), // TODO: Stats should probably scale with level better
+            new StatChart(10+(2*level), 0), // ADD StatChart here
             level,
-            5+(double.Exp(level/100.0)*10)); // TODO: XP scales with level this math sucks
+            5+(Math.Exp(level/100.0)*10)); // Also fix: Math.Exp not double.Exp
     }
 }
