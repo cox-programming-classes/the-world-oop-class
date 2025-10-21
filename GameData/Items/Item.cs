@@ -35,4 +35,7 @@ public record Item(string name, string description, double weight)
         < 0 => 0,
         _ => weight
     };
+    
+    public static Item CreateNewItem(string name, string description, double weight)
+        => new(name, description, weight); 
 }

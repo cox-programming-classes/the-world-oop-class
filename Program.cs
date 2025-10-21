@@ -38,6 +38,7 @@ while (keepPlaying)
      * TODO: Implement a more robust command parser as a separate class.
      * Code should eventually be simply "ProcessCommand(input);" or similar.
      */
+
     switch (command)
     {
         case "look":
