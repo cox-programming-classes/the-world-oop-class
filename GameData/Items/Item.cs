@@ -17,7 +17,7 @@ public record Item(string name, string description, double weight)
 {
     public string Look()
         => $"{Name} (Weight: {Weight} lbs){Environment.NewLine}{Description}";
-    
+
     public string Name { get; private set; } = name?.Trim() switch
     {
         null or "" => "Unknown Item",
@@ -35,7 +35,25 @@ public record Item(string name, string description, double weight)
         < 0 => 0,
         _ => weight
     };
-    
-    public static Item CreateNewItem(string name, string description, double weight)
-        => new(name, description, weight); 
+
+    public static Item CreateNewItem(
+        string name,
+        string description,
+        double weight)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentNullException(nameof(name), "Item name cannot be null or empty.");
+        }
+
+        if (string.IsNullOrWhiteSpace(description))
+        {
+            throw new ArgumentNullException(nameof(description), "Item description cannot be null or empty.");
+        }
+
+        return new Item(
+            name.Trim(),
+            description.Trim(),
+            weight);
+    }
 }
