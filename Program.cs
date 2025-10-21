@@ -50,6 +50,33 @@ while (keepPlaying)
                 Console.WriteLine(currentArea.LookAt(argument));
             }
             break;
+       
+        case "help":
+            Console.WriteLine("Available commands:");
+            Console.WriteLine("  look - Look around the area");
+            Console.WriteLine("  look [item] - Look at specific item");
+            Console.WriteLine("  go [direction] - Move to connected area");
+            Console.WriteLine("  help - Show this help");
+            Console.WriteLine("  quit - Exit game");
+            break;
+       
+        case "go":
+            if (string.IsNullOrWhiteSpace(argument))
+            {
+                Console.WriteLine("Go where? Try 'go [direction]'");
+            }
+            else if (currentArea.ConnectedAreas.TryGetValue(argument, out var newArea))
+            {
+                currentArea = newArea;
+                Console.WriteLine($"You move to the {currentArea.Name}.");
+                Console.WriteLine(currentArea.Description);
+            }
+            else
+            {
+                Console.WriteLine($"You can't go '{argument}' from here.");
+            }
+            break;
+
         case "quit":
             keepPlaying = false;
             Console.WriteLine("Thanks for playing!");
