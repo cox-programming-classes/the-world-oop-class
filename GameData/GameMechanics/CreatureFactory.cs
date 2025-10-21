@@ -33,4 +33,17 @@ public static class CreatureFactory
             level,
             5+(double.Exp(level/100.0)*10)); // TODO: XP scales with level this math sucks
     }
+    
+    public static Creature BuildOrcArchetype(
+        string name = "Orc", 
+        string description = "A large, brutish humanoid with green skin and a menacing appearance.",
+        int level = 2)
+    {
+        return Creature.CreateNewCreature(
+            name,
+            description,
+            new(20+(4*level), 0), // TODO: Stats should probably scale with level better
+            level,
+            10+(double.Exp(level/100.0)*20)); // TODO: XP scales with level this math sucks
+    }
 }

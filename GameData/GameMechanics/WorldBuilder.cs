@@ -36,6 +36,8 @@ public static class WorldBuilder
         var clearingArea = AreaBuilder
             .FromName("Sunny Clearing")
             .WithDescription("A bright clearing bathed in sunlight, with soft grass and colorful flowers.")
+            .WithCreature("orc",
+                BuildOrcArchetype())
             .WithItem("healing_herb", 
                 new("Healing Herb", "A small herb known for its medicinal properties.", 0.2))
             .Build();
