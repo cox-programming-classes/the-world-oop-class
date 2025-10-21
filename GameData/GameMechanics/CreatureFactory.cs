@@ -34,6 +34,14 @@ public static class CreatureFactory
             5+(double.Exp(level/100.0)*10)); // TODO: XP scales with level this math sucks
     }
     
+    /// <summary>
+    /// Helper method to build an Orc creature archetype.
+    /// You might use this in multiple areas.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="description"></param>
+    /// <param name="level"></param>
+    /// <returns></returns>
     public static Creature BuildOrcArchetype(
         string name = "Orc", 
         string description = "A large, brutish humanoid with green skin and a menacing appearance.",

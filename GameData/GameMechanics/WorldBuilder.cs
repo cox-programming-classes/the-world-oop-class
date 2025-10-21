@@ -32,6 +32,7 @@ public static class WorldBuilder
             .FromName("Mountain Cave")
             .WithDescription(
                 "A dark, damp cave with three passages: a hole above leading up, an exit to the east, and a steep climb upward to the west.")
+            // TODO: Instead of reusing the Goblin archetype, create a Bat archetype~
             .WithCreature("cave_bat", BuildGoblinArchetype("Giant Bat", "A large bat with leathery wings.", 2))
             .WithItem("glowing_crystal",
                 new Item("Glowing Crystal", "A mysterious crystal that emits a soft blue light.", 1.0))
