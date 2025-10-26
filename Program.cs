@@ -119,6 +119,37 @@ while (keepPlaying)
         default:
             Console.WriteLine($"Unknown command: {command}");
             break;
+        
+        case "attack": //add attack command
+            if (string.IsNullOrWhiteSpace(argument))
+            {
+                Console.WriteLine("Attack what? Try 'attack [creature]'");
+            }
+            else if (currentArea.Creatures.TryGetValue(argument, out var creature))
+            {
+                // TODO: Implement actual combat mechanics
+                Console.WriteLine($"You attack the {creature.Name}!");
+                Console.WriteLine("Combat system not yet implemented.");
+            }
+            else
+            {
+                Console.WriteLine($"There is no '{argument}' here to attack.");
+            }
+            break;
+        
+        case "use":
+            if (string.IsNullOrWhiteSpace(argument))
+            {
+                Console.WriteLine("Use what? Try 'use [item]'");
+            }
+            else
+            {
+                Console.WriteLine($"You attempt to use '{argument}'.");
+                Console.WriteLine("Item usage system not yet implemented.");
+            }
+            break;
+
+
     }
 }
 
