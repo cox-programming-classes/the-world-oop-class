@@ -120,7 +120,7 @@ while (keepPlaying)
             Console.WriteLine($"Unknown command: {command}");
             break;
         
-        case "attack": //add attack command
+        case "attack": //add attack command 
             if (string.IsNullOrWhiteSpace(argument))
             {
                 Console.WriteLine("Attack what? Try 'attack [creature]'");
