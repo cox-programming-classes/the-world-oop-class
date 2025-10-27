@@ -9,6 +9,8 @@ using static CreatureFactory;
 
 // TODO: Expand this to build the entire world with multiple areas, creatures, and items.
 // TODO: Create an ItemFactory for reusable item archetypes.
+// TODO: Research - WorldBuilder is currently a "static" class, and not a proper implementation of the Builder Design Pattern.  
+// With the help of the AI Chatbot, figure out how to implement the WorldBuilder properly and explain the process
 
 public static class WorldBuilder
 {
