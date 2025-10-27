@@ -13,12 +13,76 @@ namespace The_World.GameData.Items;
 /// <param name="name"></param>
 /// <param name="description"></param>
 /// <param name="weight"></param>
-public record Item(string name, string description, double weight)
-{
-    public string Look()
-        => $"{Name} (Weight: {Weight} lbs){Environment.NewLine}{Description}";
+///
 
-    public string Name { get; private set; } = name?.Trim() switch
+public abstract record Item(string name, string description, double weight)
+{
+    public abstract string Look();
+    public static Item CreateNewItem(
+        string name,
+        string description,
+        double weight)
+    {
+        return new GenericItem(
+            name?.Trim() switch { null or "" => "Unknown Item", _ => name.Trim() },
+            description?.Trim() switch { null or "" => "No description available.", _ => description.Trim() },
+            weight switch { < 0 => 0, _ => weight });
+    }
+}
+public record GenericItem(string Name, string Description, double Weight) : Item(Name, Description, Weight)
+{
+    public override string Look() => $"{Name} (Weight: {Weight} lbs){Environment.NewLine}{Description}";
+}
+
+public record Weapon(
+    string Name,
+    string Description,
+    double Weight,
+    int AttackPower,
+    int Durability) : Item(Name, Description, Weight)
+{
+    public override string Look() =>
+        $"{Name} (Attack: {AttackPower}, Durability: {Durability}/{Durability})\n{Description}";
+}
+
+
+public record Consumable(
+    string Name,
+    string Description, 
+    double Weight,
+    int Uses,
+    string Effect) : Item(Name, Description, Weight)
+{
+    public override string Look() => 
+        $"{Name} (Uses: {Uses}, Effect: {Effect})\n{Description}";
+}
+
+public enum ArmorSlot
+{
+    Head,
+    Chest,
+    Legs,
+    Feet,
+    Hands,
+    Shield,
+    Ring,
+    Necklace
+}
+
+public record Armor(
+    string Name,
+    string Description,
+    double Weight,
+    int DefenseValue,
+    ArmorSlot Slot,
+    int Durability = 100) : Item(Name, Description, Weight)
+{
+    public override string Look() =>
+        $"{Name} (Defense: +{DefenseValue}, Slot: {Slot}, Durability: {Durability}%)\n{Description}";
+}
+
+
+/*public string Name { get; private set; } = name?.Trim() switch
     {
         null or "" => "Unknown Item",
         _ => name.Trim()
@@ -55,5 +119,4 @@ public record Item(string name, string description, double weight)
             name.Trim(),
             description.Trim(),
             weight);
-    }
-}
+    }*/
