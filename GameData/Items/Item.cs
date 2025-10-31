@@ -1,3 +1,5 @@
+using The_World.GameData.Items;
+
 namespace The_World.GameData.Items;
 
 /// <summary>
@@ -18,21 +20,96 @@ namespace The_World.GameData.Items;
 public abstract record Item(string name, string description, double weight)
 {
     public abstract string Look();
-    public static Item CreateNewItem(
-        string name,
-        string description,
-        double weight)
-    {
-        return new GenericItem(
-            name?.Trim() switch { null or "" => "Unknown Item", _ => name.Trim() },
-            description?.Trim() switch { null or "" => "No description available.", _ => description.Trim() },
-            weight switch { < 0 => 0, _ => weight });
-    }
+    
+/// <summary>
+/// Creates a new Weapon item with a name, description, weight, attackPower, and durability
+/// </summary>
+/// <param name="name"> The weapon's name </param>
+/// <param name="description"> Description of the weapon's appearance and/or function </param>
+/// <param name="weight"> Weight in pounds </param>
+/// <param name="attackPower"> How much damage the weapon deals </param>
+/// <param name="durability"> Current durability </param>
+/// <returns></returns>
+public static Weapon CreateWeapon(string name, string description, double weight, int attackPower,
+        int durability = 100)
+        => new(
+            SanitizeName(name),
+            SanitizeDescription(description),
+            SanitizeWeight(weight),
+            SanitizeAttackPower(attackPower),
+            SanitizeDurability(durability));
+
+/// <summary>
+/// Creates a new Consumable item with a name, description, weight, and effect
+/// </summary>
+/// <param name="name"> The Consumable's name </param>
+/// <param name="description"> Description of the Consumable's appearance and/or function </param>
+/// <param name="weight"> Weight in pounds </param>
+/// <param name="effect"> What the Consumable does to the Player </param>
+/// <returns></returns>
+    public static Consumable CreateConsumable(string name, string description, double weight, string effect)
+        => new(
+            SanitizeName(name),
+            SanitizeDescription(description),
+            SanitizeWeight(weight),
+            SanitizeEffect(effect));
+
+    /// <summary>
+    /// Creates a new Weapon item with a name, description, weight, defenseValue, slot and durability
+    /// </summary>
+    /// <param name="name"> The Armor's name </param>
+    /// <param name="description"> Description of the Armor's appearance and/or function </param>
+    /// <param name="weight"> Weight in pounds </param>
+    /// <param name="defenseValue"> How much damage the armor deflects </param>
+    /// <param name="slot"> Where the armor is equipped </param>
+    /// <param name="durability"> Current durability </param>
+    /// <returns></returns>
+    public static Armor CreateArmor(string name, string description, double weight, int defenseValue, ArmorSlot slot,
+        int durability = 100)
+        => new(
+            SanitizeName(name),
+            SanitizeDescription(description),
+            SanitizeWeight(weight),
+            SanitizeDefense(defenseValue),
+            slot,
+            SanitizeDurability(durability));
+
+    /// <summary>
+    /// Creates a new Tool item with a name, description, weight, defenseValue, slot and durability
+    /// </summary>
+    /// <param name="name"> The tool's name </param>
+    /// <param name="description"> Description of the tool's appearance and/or function</param>
+    /// <param name="weight"> Weight in pounds</param>
+    /// <param name="durability"> Current durability</param>
+    /// <returns></returns>
+    public static Tools CreateTool(string name, string description, double weight, int durability)
+        => new(
+            SanitizeName(name),
+            SanitizeDescription(description),
+            SanitizeWeight(weight),
+            SanitizeDurability(durability));
+    private static string SanitizeName(string? name) =>
+        name?.Trim() switch { null or "" => "Unknown Item", _ => name.Trim() };
+
+    private static string SanitizeDescription(string? description) =>
+        description?.Trim() switch { null or "" => "No description available.", _ => description.Trim() };
+
+    private static double SanitizeWeight(double weight) =>
+        weight switch { < 0 => 0, _ => weight };
+
+    private static int SanitizeAttackPower(int attackPower) =>
+        attackPower switch { < 0 => 1, _ => attackPower };
+
+    private static int SanitizeDurability(int durability) =>
+        durability switch { < 0 => 0, > 100 => 100, _ => durability };
+
+    private static int SanitizeDefense(int defense) =>
+        defense switch { < 0 => 0, _ => defense };
+
+    private static string SanitizeEffect(string? effect) =>
+        effect?.Trim() switch { null or "" => "Unknown Effect", _ => effect.Trim() };
 }
-public record GenericItem(string Name, string Description, double Weight) : Item(Name, Description, Weight)
-{
-    public override string Look() => $"{Name} (Weight: {Weight} lbs){Environment.NewLine}{Description}";
-}
+
 
 public record Weapon(
     string Name,
@@ -50,11 +127,10 @@ public record Consumable(
     string Name,
     string Description, 
     double Weight,
-    int Uses,
     string Effect) : Item(Name, Description, Weight)
 {
     public override string Look() => 
-        $"{Name} (Uses: {Uses}, Effect: {Effect})\n{Description}";
+        $"{Name} (Effect: {Effect})\n{Description}";
 }
 
 public enum ArmorSlot
@@ -81,6 +157,15 @@ public record Armor(
         $"{Name} (Defense: +{DefenseValue}, Slot: {Slot}, Durability: {Durability}%)\n{Description}";
 }
 
+public record Tools(
+    string Name,
+    string Description,
+    double Weight,
+    int Durability) : Item(Name, Description, Weight)
+{
+    public override string Look() =>
+        $"{Name} \n{Description}";
+}
 
 /*public string Name { get; private set; } = name?.Trim() switch
     {
