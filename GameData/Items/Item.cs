@@ -1,5 +1,3 @@
-using The_World.GameData.Items;
-
 namespace The_World.GameData.Items;
 
 /// <summary>
@@ -20,17 +18,17 @@ namespace The_World.GameData.Items;
 public abstract record Item(string name, string description, double weight)
 {
     public abstract string Look();
-    
-/// <summary>
-/// Creates a new Weapon item with a name, description, weight, attackPower, and durability
-/// </summary>
-/// <param name="name"> The weapon's name </param>
-/// <param name="description"> Description of the weapon's appearance and/or function </param>
-/// <param name="weight"> Weight in pounds </param>
-/// <param name="attackPower"> How much damage the weapon deals </param>
-/// <param name="durability"> Current durability </param>
-/// <returns></returns>
-public static Weapon CreateWeapon(string name, string description, double weight, int attackPower,
+
+    /// <summary>
+    /// Creates a new Weapon item with a name, description, weight, attackPower, and durability
+    /// </summary>
+    /// <param name="name"> The weapon's name </param>
+    /// <param name="description"> Description of the weapon's appearance and/or function </param>
+    /// <param name="weight"> Weight in pounds </param>
+    /// <param name="attackPower"> How much damage the weapon deals </param>
+    /// <param name="durability"> Current durability </param>
+    /// <returns></returns>
+    public static Weapon CreateWeapon(string name, string description, double weight, int attackPower,
         int durability = 100)
         => new(
             SanitizeName(name),
@@ -39,14 +37,14 @@ public static Weapon CreateWeapon(string name, string description, double weight
             SanitizeAttackPower(attackPower),
             SanitizeDurability(durability));
 
-/// <summary>
-/// Creates a new Consumable item with a name, description, weight, and effect
-/// </summary>
-/// <param name="name"> The Consumable's name </param>
-/// <param name="description"> Description of the Consumable's appearance and/or function </param>
-/// <param name="weight"> Weight in pounds </param>
-/// <param name="effect"> What the Consumable does to the Player </param>
-/// <returns></returns>
+    /// <summary>
+    /// Creates a new Consumable item with a name, description, weight, and effect
+    /// </summary>
+    /// <param name="name"> The Consumable's name </param>
+    /// <param name="description"> Description of the Consumable's appearance and/or function </param>
+    /// <param name="weight"> Weight in pounds </param>
+    /// <param name="effect"> What the Consumable does to the Player </param>
+    /// <returns></returns>
     public static Consumable CreateConsumable(string name, string description, double weight, string effect)
         => new(
             SanitizeName(name),
@@ -88,6 +86,7 @@ public static Weapon CreateWeapon(string name, string description, double weight
             SanitizeDescription(description),
             SanitizeWeight(weight),
             SanitizeDurability(durability));
+
     private static string SanitizeName(string? name) =>
         name?.Trim() switch { null or "" => "Unknown Item", _ => name.Trim() };
 
@@ -119,7 +118,7 @@ public record Weapon(
     int Durability) : Item(Name, Description, Weight)
 {
     public override string Look() =>
-        $"{Name} (Attack: {AttackPower}, Durability: {Durability}/{Durability})\n{Description}";
+        $"{Name} (Attack: {AttackPower}, Durability: {Durability}/100)\n{Description}";
 }
 
 
@@ -166,42 +165,3 @@ public record Tools(
     public override string Look() =>
         $"{Name} \n{Description}";
 }
-
-/*public string Name { get; private set; } = name?.Trim() switch
-    {
-        null or "" => "Unknown Item",
-        _ => name.Trim()
-    };
-
-    public string Description { get; private set; } = description?.Trim() switch
-    {
-        null or "" => "No description available.",
-        _ => description.Trim()
-    };
-
-    public double Weight { get; private set; } = weight switch
-    {
-        < 0 => 0,
-        _ => weight
-    };
-
-    public static Item CreateNewItem(
-        string name,
-        string description,
-        double weight)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentNullException(nameof(name), "Item name cannot be null or empty.");
-        }
-
-        if (string.IsNullOrWhiteSpace(description))
-        {
-            throw new ArgumentNullException(nameof(description), "Item description cannot be null or empty.");
-        }
-
-        return new Item(
-            name.Trim(),
-            description.Trim(),
-            weight);
-    }*/
