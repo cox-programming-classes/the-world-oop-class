@@ -110,6 +110,14 @@ public abstract record Item(string name, string description, double weight)
 }
 
 
+/// <summary>
+/// Represents a weapon item that can be used in combat
+/// </summary>
+/// <param name="Name">The weapon's display name, and how it should be referenced in commands</param>
+/// <param name="Description">Detailed description of the weapon</param>
+/// <param name="Weight">Weight in pounds</param>
+/// <param name="AttackPower">Base damage dealt in combat</param>
+/// <param name="Durability">How close the weapon is to breaking</param>
 public record Weapon(
     string Name,
     string Description,
@@ -121,7 +129,13 @@ public record Weapon(
         $"{Name} (Attack: {AttackPower}, Durability: {Durability}/100)\n{Description}";
 }
 
-
+/// <summary>
+/// Represents a consumable item that can be used by the Player
+/// </summary>
+/// <param name="Name">The consumable's display name, and how it should be referenced in commands</param>
+/// <param name="Description">Detailed description of the consumable</param>
+/// <param name="Weight">Weight in pounds</param>
+/// <param name="Effect">What the Consumable does to the Player</param>
 public record Consumable(
     string Name,
     string Description, 
@@ -132,6 +146,10 @@ public record Consumable(
         $"{Name} (Effect: {Effect})\n{Description}";
 }
 
+/// <summary>
+/// Thing that I need to do later- shows where the armor is equipped.
+/// maybe I should make it so armor doesn't need to be equipped also. ah well
+/// </summary>
 public enum ArmorSlot
 {
     Head,
@@ -140,10 +158,17 @@ public enum ArmorSlot
     Feet,
     Hands,
     Shield,
-    Ring,
-    Necklace
 }
 
+/// <summary>
+/// Represents an armor item, which can be equipped to reduce damage done to the Player
+/// </summary>
+/// <param name="Name">The armor's display name, and how it should be referenced in commands</param>
+/// <param name="Description">Detailed description of the consumable</param>
+/// <param name="Weight">Weight in pounds</param>
+/// <param name="DefenseValue">How much damage the armor reflects</param>
+/// <param name="Slot">Where the armor is equipped</param>
+/// <param name="Durability">How close the armor is to breaking</param>
 public record Armor(
     string Name,
     string Description,
@@ -156,6 +181,13 @@ public record Armor(
         $"{Name} (Defense: +{DefenseValue}, Slot: {Slot}, Durability: {Durability}%)\n{Description}";
 }
 
+/// <summary>
+/// Represents a tool item, which can be used by the Player for. um. well. something? later
+/// </summary>
+/// <param name="Name">The tool's display name, and how it should be referenced in commands</param>
+/// <param name="Description">Detailed description of the tool</param>
+/// <param name="Weight">Weight in pounds</param>
+/// <param name="Durability">How close the tool is to breaking</param>
 public record Tools(
     string Name,
     string Description,
