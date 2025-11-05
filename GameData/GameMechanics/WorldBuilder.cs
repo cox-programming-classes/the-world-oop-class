@@ -22,7 +22,14 @@ public class WorldBuilder
     /// </summary>
     public WorldBuilder WithArea(string key, Area area)
     {
-        if (string.IsNullOrWhiteSpace(key))
+        _areas[key?.Trim() switch //overwrites does not throw exception if u have key twice
+        {
+            null or "" => throw new ArgumentException("Area key cannot be null or empty.", nameof(key)),
+            _=>key
+        }]= area ?? throw new ArgumentNullException(nameof(area));
+        return this;
+        
+        /* if (string.IsNullOrWhiteSpace(key))
             throw new ArgumentException("Area key cannot be null or empty.", nameof(key));
         
         if (_areas.ContainsKey(key))
@@ -30,6 +37,7 @@ public class WorldBuilder
 
         _areas[key] = area ?? throw new ArgumentNullException(nameof(area));
         return this;
+        */
     }
 
     /// <summary>
@@ -129,7 +137,7 @@ public class WorldBuilder
 
         // Use the proper Builder pattern to construct the world
         return WorldBuilder.Create()
-            .WithArea("forest", forestArea)
+            .WithArea("forest", forestArea) // human-readable words are not good unique identifiers (i.e. key names); use e globally unique identifier (GUID.something) 
             .WithArea("cave", caveArea)
             .WithArea("field", fieldArea)
             .WithArea("dungeon", dungeonArea)
