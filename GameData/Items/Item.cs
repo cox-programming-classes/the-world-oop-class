@@ -150,14 +150,20 @@ public record Consumable(
 /// Thing that I need to do later- shows where the armor is equipped.
 /// maybe I should make it so armor doesn't need to be equipped also. ah well
 /// </summary>
-public enum ArmorSlot
+public abstract record ArmorSlot()
 {
-    Head,
-    Chest,
-    Legs,
-    Feet,
-    Hands,
-    Shield,
+    public static Head HeadSlot => new();
+    public record Head(): ArmorSlot();
+    public static Chest ChestSlot => new();
+    public record Chest(): ArmorSlot();
+    public static Legs LegsSlot => new();
+    public record Legs(): ArmorSlot();
+    public static Feet FeetSlot => new();
+    public record Feet(): ArmorSlot();
+    public static Hands HandsSlot => new();
+    public record Hands(): ArmorSlot();
+    public static Shield ShieldSlot => new();
+    public record Shield():  ArmorSlot();
 }
 
 /// <summary>
