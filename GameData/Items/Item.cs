@@ -43,7 +43,7 @@ public abstract record Item(string Name, string Description, double Weight)
     /// <param name="name"> The Consumable's name </param>
     /// <param name="description"> Description of the Consumable's appearance and/or function </param>
     /// <param name="weight"> Weight in pounds </param>
-    /// <param name="effect"> What the Consumable does to the Player </param>
+    /// <param name="effect"> TODO:  WHAT DOES THIS MEAN!!! What the Consumable does to the Player </param>
     /// <returns></returns>
     public static Consumable CreateConsumable(string name, string description, double weight, string effect)
         => new(
