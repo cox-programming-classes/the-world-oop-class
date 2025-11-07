@@ -1,5 +1,6 @@
 using The_World.GameData.Areas;
 using The_World.GameData.Creatures;
+using The_World.GameData.Items;
 
 namespace The_World.GameData.GameMechanics;
 
@@ -30,7 +31,7 @@ public static class WorldBuilder
                 "boss_goblin",
                 BuildGoblinArchetype("Goblin Warrior", "A fierce goblin clad in makeshift armor, wielding a crude weapon.", 2))
             .WithItem("rusty_sword", 
-                new("Rusty Sword", "An old and worn sword, still sharp enough to be dangerous.", 3.5))
+                ItemFactory.BuildRustySwordArchetype())
             .Build();
         
         var clearingArea = AreaBuilder
@@ -39,7 +40,7 @@ public static class WorldBuilder
             .WithCreature("orc",
                 BuildOrcArchetype())
             .WithItem("healing_herb", 
-                new("Healing Herb", "A small herb known for its medicinal properties.", 0.2))
+                ItemFactory.BuildHealingHerbArchetype())
             .Build();
         
         // Connect areas
