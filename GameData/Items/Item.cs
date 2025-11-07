@@ -10,12 +10,12 @@ namespace The_World.GameData.Items;
 ///
 /// TODO: Research - Polymorphism for Item Types.  In Particular, look for the key word "Discriminated Unions".
 /// </summary>
-/// <param name="name"></param>
-/// <param name="description"></param>
-/// <param name="weight"></param>
+/// <param name="Name"></param>
+/// <param name="Description"></param>
+/// <param name="Weight"></param>
 ///
 
-public abstract record Item(string name, string description, double weight)
+public abstract record Item(string Name, string Description, double Weight)
 {
     public abstract string Look();
 
@@ -86,6 +86,11 @@ public abstract record Item(string name, string description, double weight)
             SanitizeDescription(description),
             SanitizeWeight(weight),
             SanitizeDurability(durability));
+
+    public static Decoration CreateDecoration(string name, string description)
+        => new(
+            SanitizeName(name),
+            SanitizeDescription(description));
 
     private static string SanitizeName(string? name) =>
         name?.Trim() switch { null or "" => "Unknown Item", _ => name.Trim() };
@@ -199,6 +204,19 @@ public record Tools(
     string Description,
     double Weight,
     int Durability) : Item(Name, Description, Weight)
+{
+    public override string Look() =>
+        $"{Name} \n{Description}";
+}
+
+/// <summary>
+/// Environmental Item, something to look at~!
+/// </summary>
+/// <param name="Name"></param>
+/// <param name="Description"></param>
+public record Decoration(
+    string Name,
+    string Description) : Item(Name, Description, 0)
 {
     public override string Look() =>
         $"{Name} \n{Description}";

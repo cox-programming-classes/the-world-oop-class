@@ -5,6 +5,7 @@ using The_World.GameData.Items;
 namespace The_World.GameData.GameMechanics;
 
 using static CreatureFactory;
+using static ItemFactory;
 
 /// <summary>
 /// Proper implementation of the Builder Design Pattern for creating game worlds.
@@ -106,27 +107,32 @@ public class WorldBuilder
     /// <summary>
     /// Build the default game world.
     /// </summary>
-    public static Area BuildDefaultWorld()
+    public static Area BuildWorld()
     {
         // Create individual areas (same as your original code)
         var forestArea = AreaBuilder
             .FromName("Dark Forest")
             .WithDescription("A gloomy forest filled with towering trees and eerie sounds. You notice a hole in the ground leading downward.")
             .WithCreature("goblin_1", BuildGoblinArchetype())
-            .WithItem("rusty_sword", new Item("Rusty Sword", "An old and worn sword, still sharp enough to be dangerous.", 3.5))
+            .WithItem("rusty_sword", BuildRustySwordArchetype())
             .Build();
 
         var caveArea = AreaBuilder
             .FromName("Mountain Cave")
             .WithDescription("A dark, damp cave with three passages: a hole above leading up, an exit to the east, and a steep climb upward to the west.")
             .WithCreature("cave_bat", BuildGoblinArchetype("Giant Bat", "A large bat with leathery wings.", 2))
-            .WithItem("glowing_crystal", new Item("Glowing Crystal", "A mysterious crystal that emits a soft blue light.", 1.0))
+            .WithItem("glowing_crystal", Item.CreateDecoration("Glowing Crystal", "A mysterious crystal that emits a soft blue light."))
             .Build();
 
         var fieldArea = AreaBuilder
             .FromName("Open Field")
             .WithDescription("A vast field of tall grass swaying in the breeze. To the west, you see the entrance to a cave.")
-            .WithItem("healing_herb", new Item("Healing Herb", "A small herb known for its medicinal properties.", 0.2))
+            .WithItem("healing_herb", 
+                BuildHealingHerbArchetype(
+                "Healing Herb", 
+                "A small herb known for its medicinal properties.", 
+                0.2, 
+                "oh no........."))
             .Build();
 
         var dungeonArea = AreaBuilder
