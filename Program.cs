@@ -6,7 +6,7 @@ using The_World.GameData.GameMechanics;
 Console.WriteLine("Enter player name:");
 var player = Player.CreateNewPlayer(Console.ReadLine()!, "");
 
-var currentArea = WorldBuilder.BuildWorld();
+var currentArea = WorldBuilder.BuildDefaultWorld();
 
 Console.WriteLine($"Welcome, {player.Name}, to The World!");
 Console.WriteLine($"You find yourself in the {currentArea.Name}.");
