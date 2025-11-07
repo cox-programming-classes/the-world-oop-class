@@ -106,6 +106,7 @@ public class WorldBuilder
 
     /// <summary>
     /// Build the default game world.
+    /// TODO: This needs to return a GameContext object.
     /// </summary>
     public static Area BuildWorld()
     {
