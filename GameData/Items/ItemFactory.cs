@@ -1,5 +1,4 @@
-using The_World.GameData.Items;
-namespace The_World.GameData.GameMechanics;
+namespace The_World.GameData.Items;
 
 public static class ItemFactory
 {
