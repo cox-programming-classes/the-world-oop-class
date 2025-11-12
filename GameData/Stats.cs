@@ -5,20 +5,43 @@ namespace The_World.GameData;
 /// TODO: Expand this to include more stats as needed.
 /// TODO: Research - Structs vs Records for lightweight data containers.
 /// </summary>
-public record StatChart(int Health, int Mana)
+public record StatChart
 {
-    public int Health { get; private set; } = Health switch
-    {
-        < 0 => 0,
-        _ => Health
-    };
+    private int _health;
 
-    public int Mana { get; private set; } = Mana switch
+    public int Health
     {
+        get => _health;
+        set => _health = value switch
+            // initial value setter
+            {
+                < 0 => 0,
+                > 100 => 100,
+                _ => Health
+            };
+    }
+
+    public void RestoreHealth(int amount)
+    {
+        if (amount < 0)
+        {
+            Health += amount;
+        }
+    }
+
+    private int _mana;
+
+    public int Mana
+    {
+        get => _mana;
+        set => _mana = Mana switch
+        {
         < 0 => 0,
+        > 50 => 50,
         _ => Mana
     };
-    
-    // TODO: Use Dice rolls to determine starting stats based on Player Class or Creature Type?
+}
+
+// TODO: Use Dice rolls to determine starting stats based on Player Class or Creature Type?
     // TODO: add Properties which are Dice for things like "Attack Power", "Defense", etc.
 }

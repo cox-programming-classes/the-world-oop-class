@@ -27,7 +27,7 @@ public static class CreatureFactory
         return Creature.CreateNewCreature(
             name,
             description,
-            new(10+(2*level), 0), // TODO: Stats should probably scale with level better
+            new(){Health = 10+(2*level), Mana = 0}, // TODO: Stats should probably scale with level better
             level,
             5+(double.Exp(level/100.0)*10)); // TODO: XP scales with level this math sucks
     }
@@ -48,7 +48,7 @@ public static class CreatureFactory
         return Creature.CreateNewCreature(
             name,
             description,
-            new(20+(4*level), 0), // TODO: Stats should probably scale with level better
+            new(){Health = 20+(4*level), Mana = 0}, // TODO: Stats should probably scale with level better
             level,
             10+(double.Exp(level/100.0)*20)); // TODO: XP scales with level this math sucks
     }
