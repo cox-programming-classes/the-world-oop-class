@@ -50,6 +50,17 @@ public class GameContext
         ItemLibrary["ancient_book"] = () => ItemFactory.BuildAncientBookArchetype();
         ItemLibrary["gold_coin"] = () => ItemFactory.BuildGoldCoinArchetype();
         ItemLibrary["mysterious_orb"] = () => ItemFactory.BuildMysteriousOrbArchetype();
+        // Add these lines to your PopulateItemLibrary() method in GameContext:
+
+// More Bones
+        ItemLibrary["random_bone"] = () => ItemFactory.BuildRandomBoneArchetype();
+
+// More armor? idk does a witch hat help u  
+        ItemLibrary["witch_hat"] = () => ItemFactory.BuildWitchHatArchetype();
+
+// yum
+        ItemLibrary["raspberry_bar"] = () => ItemFactory.BuildRaspberryBarArchetype();
+
     }
     
     // NEW: Method to spawn an item from the library

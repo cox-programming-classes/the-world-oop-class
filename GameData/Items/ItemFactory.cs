@@ -169,4 +169,31 @@ public static class ItemFactory
     {
         return Item.CreateDecoration(name, description);
     }
+    // Add these to your ItemFactory class:
+
+    public static Decoration BuildRandomBoneArchetype(
+        string name = "random_bone",
+        string description = "A mysterious bone of unknown origin. You're not sure what creature this came from.")
+    {
+        return Item.CreateDecoration(name, description);
+    }
+
+    public static Armor BuildWitchHatArchetype(
+        string name = "witch_hat",
+        string description = "A tall, pointed hat made of dark fabric. It seems to shimmer with magical energy.",
+        double weight = 0.5,
+        int defenseValue = 1)
+    {
+        return Item.CreateArmor(name, description, weight, defenseValue, ArmorSlot.HeadSlot);
+    }
+
+    public static Consumable BuildRaspberryBarArchetype(
+        string name = "raspberry_bar",
+        string description = "A sweet energy bar packed with dried raspberries. Looks delicious!",
+        double weight = 0.3,
+        string effect = "+8 hp, +3 energy")
+    {
+        return Item.CreateConsumable(name, description, weight, effect);
+    }
+
 }
