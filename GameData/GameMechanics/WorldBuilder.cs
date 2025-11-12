@@ -1,5 +1,7 @@
 using The_World.GameData.Areas;
 using The_World.GameData.Creatures;
+using The_World.GameData.Commands; // Add this for GameContext
+using The_World.GameData; // Add this for Player
 
 namespace The_World.GameData.GameMechanics;
 
@@ -9,8 +11,11 @@ public class WorldBuilder
     /// Initialize the WHOLE WORLD here.
     /// </summary>
     /// <returns></returns>
-    public static Area BuildWorld()
+    public static GameContext BuildWorld()
     {
+        // Create a default player
+        var defaultPlayer = Player.CreateNewPlayer("Hero", "Adventurer");
+        
         var startingArea = AreaBuilder
             .FromName("Dark Forest")
             .WithDescription("A gloomy forest filled with towering trees and eerie sounds.")
@@ -27,8 +32,8 @@ public class WorldBuilder
                 new("Rusty Sword", "An old and worn sword, still sharp enough to be dangerous.", 3.5))
             .Build();
         
+        return new GameContext(defaultPlayer, startingArea);
         
-        return startingArea;
     }
     
     /// <summary>

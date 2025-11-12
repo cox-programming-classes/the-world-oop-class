@@ -2,15 +2,13 @@
 
 using The_World.GameData;
 using The_World.GameData.GameMechanics;
+using The_World.GameData.Commands;
 
-Console.WriteLine("Enter player name:");
-var player = Player.CreateNewPlayer(Console.ReadLine()!, "");
+var gameContext = WorldBuilder.BuildWorld();
 
-var currentArea = WorldBuilder.BuildWorld();
-
-Console.WriteLine($"Welcome, {player.Name}, to The World!");
-Console.WriteLine($"You find yourself in the {currentArea.Name}.");
-Console.WriteLine(currentArea.Description);
+Console.WriteLine($"Welcome, {gameContext.Player.Name}, to The World!");
+Console.WriteLine($"You find yourself in the {gameContext.CurrentArea.Name}.");
+Console.WriteLine(gameContext.CurrentArea.Description);
 
 bool keepPlaying = true;
 while (keepPlaying)
@@ -43,11 +41,11 @@ while (keepPlaying)
         case "look":
             if (string.IsNullOrWhiteSpace(argument))
             {
-                Console.WriteLine(currentArea.LookAround());
+                Console.WriteLine(gameContext.CurrentArea.LookAround());
             }
             else
             {
-                Console.WriteLine(currentArea.LookAt(argument));
+                Console.WriteLine(gameContext.CurrentArea.LookAt(argument));
             }
             break;
         case "quit":
