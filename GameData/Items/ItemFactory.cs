@@ -175,7 +175,7 @@ public static class ItemFactory
         string name = "random_bone",
         string description = "A mysterious bone of unknown origin. You're not sure what creature this came from.")
     {
-        return Item.CreateDecoration(name, description);
+        return Item.CreateDecoration(name, description); 
     }
 
     public static Armor BuildWitchHatArchetype(
@@ -184,7 +184,7 @@ public static class ItemFactory
         double weight = 0.5,
         int defenseValue = 1)
     {
-        return Item.CreateArmor(name, description, weight, defenseValue, ArmorSlot.HeadSlot);
+        return Item.CreateArmor(name, description, weight, defenseValue, ArmorSlot.HeadSlot); //boost mana when worn
     }
 
     public static Consumable BuildRaspberryBarArchetype(
@@ -197,3 +197,5 @@ public static class ItemFactory
     }
 
 }
+
+//consumables should (i think) increase health and stamina
