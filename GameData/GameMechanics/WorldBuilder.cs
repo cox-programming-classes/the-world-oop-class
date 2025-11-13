@@ -149,7 +149,7 @@ public class WorldBuilder
             .WithArea("dungeon", dungeonArea)
             .WithConnection("forest", "down", "cave", "up")
             .WithConnection("cave", "east", "field", "west")
-            .WithConnection("cave", "climb", "dungeon", "down")
+            .WithConnection("cave", "west", "dungeon", "down")
             .WithStartingArea("forest")
             .Build();
     }
