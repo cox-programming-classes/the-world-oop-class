@@ -17,13 +17,13 @@ public record StatChart
             {
                 < 0 => 0,
                 > 100 => 100,
-                _ => Health
+                _ => value
             };
     }
 
     public void RestoreHealth(int amount)
     {
-        if (amount < 0)
+        if (amount > 0)
         {
             Health += amount;
         }
@@ -34,14 +34,21 @@ public record StatChart
     public int Mana
     {
         get => _mana;
-        set => _mana = Mana switch
+        set => _mana = value switch
         {
-        < 0 => 0,
-        > 50 => 50,
-        _ => Mana
-    };
-}
+            < 0 => 0,
+            > 50 => 50,
+            _ => value
+        };
 
+    }
+    public void RestoreMana(int amount)
+    {
+        if (amount > 0)
+        {
+            Mana += amount;
+        }
+    }
+}
 // TODO: Use Dice rolls to determine starting stats based on Player Class or Creature Type?
     // TODO: add Properties which are Dice for things like "Attack Power", "Defense", etc.
-}
