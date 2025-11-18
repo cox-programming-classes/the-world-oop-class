@@ -114,6 +114,7 @@ public class WorldBuilder
             .FromName("Dark Forest")
             .WithDescription("A gloomy forest filled with towering trees and eerie sounds. You notice a hole in the ground leading downward.")
             .WithCreature("goblin_1", BuildGoblinArchetype())
+            .WithItem("health_potion", BuildHealthPotionArchetype())
             .WithItem("rusty_sword", BuildRustySwordArchetype())
             .Build();
 
@@ -131,8 +132,8 @@ public class WorldBuilder
                 BuildHealingHerbArchetype(
                 "Healing Herb", 
                 "A small herb known for its medicinal properties.", 
-                0.2, 
-                "oh no........."))
+                0.2,
+                2))
             .Build();
 
         var dungeonArea = AreaBuilder

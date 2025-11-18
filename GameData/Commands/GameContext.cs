@@ -38,7 +38,9 @@ public class GameContext
         // Consumables
         ItemLibrary["healing_herb"] = () => ItemFactory.BuildHealingHerbArchetype();
         ItemLibrary["health_potion"] = () => ItemFactory.BuildHealthPotionArchetype();
+        ItemLibrary["large_health_potion"] = () => ItemFactory.BuildLargeHealthPotionArchetype();
         ItemLibrary["mana_potion"] = () => ItemFactory.BuildManaPotionArchetype();
+        ItemLibrary["large_mana_potion"] = () => ItemFactory.BuildLargeManaPotionArchetype();
         ItemLibrary["bread"] = () => ItemFactory.BuildBreadArchetype();
         
         // Tools

@@ -3,8 +3,15 @@
 using The_World.GameData.Commands;
 namespace The_World.GameData.Effects;
 
-public class HealingEffect(int healAmount = 20) : ConsumableEffect
+public class HealingEffect(int healAmount) : IConsumableEffect
 {
+    private readonly int _healAmount = healAmount switch
+    {
+        < 1 => throw new ArgumentException("Restored heal amount must be at least 1."),
+        > 200 => throw new ArgumentException("Restored heal amount cannot exceed 200."),
+        _ => healAmount
+    };
+
     public string Apply(GameContext context)
     {
         var oldHealth = context.Player.Stats.Health;
@@ -16,4 +23,5 @@ public class HealingEffect(int healAmount = 20) : ConsumableEffect
             ? $"You feel healthier! Restored {actualHealing} health points."
             : "You're already at full health!";
     }
+    public string GetDescription() => $"Restores {_healAmount} health points";
 }
