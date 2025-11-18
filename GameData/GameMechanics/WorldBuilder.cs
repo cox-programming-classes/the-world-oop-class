@@ -114,7 +114,7 @@ public class WorldBuilder
             .FromName("Dark Forest")
             .WithDescription("A gloomy forest filled with towering trees and eerie sounds. You notice a hole in the ground leading downward.")
             .WithCreature("goblin_1", BuildGoblinArchetype())
-            .WithItem("health_potion", BuildHealthPotionArchetype())
+            .WithItem("health_potion", BuildHealthPotionArchetype())//testing my things you can remove this if you want - Anne
             .WithItem("rusty_sword", BuildRustySwordArchetype())
             .Build();
 

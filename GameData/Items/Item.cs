@@ -21,7 +21,7 @@ public abstract record Item(string Name, string Description, double Weight)
 {
     public abstract string Look();
 
-    #region CreateItems
+    #region Create Items
 
     /// <summary>
     /// Creates a new Weapon item with a name, description, weight, attackPower, and durability
