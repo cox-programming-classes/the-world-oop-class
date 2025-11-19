@@ -11,10 +11,10 @@ public class WorldBuilder
     /// Initialize the WHOLE WORLD here.
     /// </summary>
     /// <returns></returns>
-    public static GameContext BuildWorld()
+    public static GameContext BuildWorld(string playerName)
     {
         // Create a default player
-        var defaultPlayer = Player.CreateNewPlayer("Hero", "Adventurer");
+        var defaultPlayer = Player.CreateNewPlayer(playerName, "Adventurer");
         
         var startingArea = AreaBuilder
             .FromName("Dark Forest")

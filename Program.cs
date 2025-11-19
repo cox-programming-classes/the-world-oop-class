@@ -4,7 +4,9 @@ using The_World.GameData;
 using The_World.GameData.GameMechanics;
 using The_World.GameData.Commands;
 
-var gameContext = WorldBuilder.BuildWorld();
+Console.WriteLine("Please enter your player name.");
+var playerName = Console.ReadLine();
+var gameContext = WorldBuilder.BuildWorld(playerName);
 
 Console.WriteLine($"Welcome, {gameContext.Player.Name}, to The World!");
 Console.WriteLine($"You find yourself in the {gameContext.CurrentArea.Name}.");
