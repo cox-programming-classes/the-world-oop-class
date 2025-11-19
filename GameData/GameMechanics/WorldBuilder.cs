@@ -1,159 +1,58 @@
 using The_World.GameData.Areas;
 using The_World.GameData.Creatures;
-using The_World.GameData.Items;
+using The_World.GameData.Commands; // Add this for GameContext
+using The_World.GameData; // Add this for Player
 
 namespace The_World.GameData.GameMechanics;
 
-using static CreatureFactory;
-using static ItemFactory;
-
-/// <summary>
-/// Proper implementation of the Builder Design Pattern for creating game worlds.
-/// This allows for flexible, step-by-step world construction.
-/// </summary>
 public class WorldBuilder
 {
-    private readonly Dictionary<string, Area> _areas = new();
-    private string? _startingAreaKey;
-
-    #region Fluent Interface Methods
-
     /// <summary>
-    /// Add a new area to the world being built.
+    /// Initialize the WHOLE WORLD here.
     /// </summary>
-    public WorldBuilder WithArea(string key, Area area)
+    /// <returns></returns>
+    public static GameContext BuildWorld(string playerName)
     {
-        _areas[key?.Trim() switch //overwrites does not throw exception if u have key twice
-        {
-            null or "" => throw new ArgumentException("Area key cannot be null or empty.", nameof(key)),
-            _=>key
-        }]= area ?? throw new ArgumentNullException(nameof(area));
-        return this;
+        // Create a default player
+        var defaultPlayer = Player.CreateNewPlayer(playerName, "Adventurer");
         
-        /* if (string.IsNullOrWhiteSpace(key))
-            throw new ArgumentException("Area key cannot be null or empty.", nameof(key));
-        
-        if (_areas.ContainsKey(key))
-            throw new ArgumentException($"Area with key '{key}' already exists.", nameof(key));
-
-        _areas[key] = area ?? throw new ArgumentNullException(nameof(area));
-        return this;
-        */
-    }
-
-    /// <summary>
-    /// Connect two areas bidirectionally.
-    /// </summary>
-    public WorldBuilder WithConnection(string fromAreaKey, string direction, string toAreaKey, string reverseDirection)
-    {
-        if (!_areas.ContainsKey(fromAreaKey))
-            throw new ArgumentException($"Area '{fromAreaKey}' not found.");
-        if (!_areas.ContainsKey(toAreaKey))
-            throw new ArgumentException($"Area '{toAreaKey}' not found.");
-
-        var fromArea = _areas[fromAreaKey];
-        var toArea = _areas[toAreaKey];
-
-        // Create bidirectional connection by rebuilding both areas
-        _areas[fromAreaKey] = AreaBuilder.FromArea(fromArea)
-            .WithConnectedArea(direction, toArea)
-            .Build();
-
-        _areas[toAreaKey] = AreaBuilder.FromArea(toArea)
-            .WithConnectedArea(reverseDirection, fromArea)
-            .Build();
-
-        return this;
-    }
-
-    /// <summary>
-    /// Set which area the player starts in.
-    /// </summary>
-    public WorldBuilder WithStartingArea(string areaKey)
-    {
-        if (!_areas.ContainsKey(areaKey))
-            throw new ArgumentException($"Starting area '{areaKey}' not found.");
-        
-        _startingAreaKey = areaKey;
-        return this;
-    }
-
-    #endregion
-
-    #region Build Method
-
-    /// <summary>
-    /// Complete the world construction and return the starting area.
-    /// </summary>
-    public Area Build()
-    {
-        if (_areas.Count == 0)
-            throw new InvalidOperationException("Cannot build world with no areas.");
-        
-        // Use specified starting area or default to first added area
-        var startingKey = _startingAreaKey ?? _areas.Keys.First();
-        return _areas[startingKey];
-    }
-
-    #endregion
-
-    #region Static Factory Methods
-
-    /// <summary>
-    /// Create a new WorldBuilder instance.
-    /// </summary>
-    public static WorldBuilder Create() => new();
-
-    /// <summary>
-    /// Build the default game world.
-    /// TODO: This needs to return a GameContext object.
-    /// </summary>
-    public static Area BuildWorld()
-    {
-        // Create individual areas (same as your original code)
-        var forestArea = AreaBuilder
+        var startingArea = AreaBuilder
             .FromName("Dark Forest")
-            .WithDescription("A gloomy forest filled with towering trees and eerie sounds. You notice a hole in the ground leading downward.")
-            .WithCreature("goblin_1", BuildGoblinArchetype())
-            .WithItem("rusty_sword", BuildRustySwordArchetype())
+            .WithDescription("A gloomy forest filled with towering trees and eerie sounds.")
+            .WithCreature(
+                "goblin_1",
+                BuildGoblinArchetype())
+            .WithCreature(
+                "goblin_2",
+                BuildGoblinArchetype("Goblin Scout", "A nimble goblin with keen eyes, always on the lookout for intruders."))
+            .WithCreature(
+                "boss_goblin",
+                BuildGoblinArchetype("Goblin Warrior", "A fierce goblin clad in makeshift armor, wielding a crude weapon.", 2))
+            .WithItem("rusty_sword", 
+                new("Rusty Sword", "An old and worn sword, still sharp enough to be dangerous.", 3.5))
             .Build();
-
-        var caveArea = AreaBuilder
-            .FromName("Mountain Cave")
-            .WithDescription("A dark, damp cave with three passages: a hole above leading up, an exit to the east, and a steep climb upward to the west.")
-            .WithCreature("cave_bat", BuildGoblinArchetype("Giant Bat", "A large bat with leathery wings.", 2))
-            .WithItem("glowing_crystal", Item.CreateDecoration("Glowing Crystal", "A mysterious crystal that emits a soft blue light."))
-            .Build();
-
-        var fieldArea = AreaBuilder
-            .FromName("Open Field")
-            .WithDescription("A vast field of tall grass swaying in the breeze. To the west, you see the entrance to a cave.")
-            .WithItem("healing_herb", 
-                BuildHealingHerbArchetype(
-                "Healing Herb", 
-                "A small herb known for its medicinal properties.", 
-                0.2, 
-                "oh no........."))
-            .Build();
-
-        var dungeonArea = AreaBuilder
-            .FromName("Ancient Dungeon")
-            .WithDescription("A stone dungeon with moss-covered walls. You can climb down to return to the cave below.")
-            .WithCreature("dungeon_guard", BuildGoblinArchetype("Skeleton Warrior", "An ancient skeleton in rusted armor.", 3))
-            .Build();
-
-        // Use the proper Builder pattern to construct the world
-        return WorldBuilder.Create()
-            .WithArea("forest", forestArea) // human-readable words are not good unique identifiers (i.e. key names); use e globally unique identifier (GUID.something) 
-            .WithArea("cave", caveArea)
-            .WithArea("field", fieldArea)
-            .WithArea("dungeon", dungeonArea)
-            .WithConnection("forest", "down", "cave", "up")
-            .WithConnection("cave", "east", "field", "west")
-            .WithConnection("cave", "climb", "dungeon", "down")
-            .WithStartingArea("forest")
-            .Build();
+        
+        return new GameContext(defaultPlayer, startingArea);
+        
     }
-
-    #endregion
+    
+    /// <summary>
+    /// Helper method to build a Goblin creature archetype.
+    /// You might use this in multiple areas.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="description"></param>
+    /// <returns></returns>
+    private static Creature BuildGoblinArchetype(
+        string name = "Goblin", 
+        string description = "A small, green humanoid creature with sharp teeth and a mischievous grin.",
+        int level = 1)
+    {
+        return Creature.CreateNewCreature(
+            name,
+            description,
+            new(10+(2*level), 0), // TODO: Stats should probably scale with level better
+            level,
+            5+(double.Exp(level/100.0)*10)); // TODO: XP scales with level this math sucks
+    }
 }
