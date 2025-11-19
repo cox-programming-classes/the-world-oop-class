@@ -1,3 +1,5 @@
+using The_World.GameData.GameMechanics;
+
 namespace The_World.GameData.Commands;
 
 public class GoCommand : ICommand

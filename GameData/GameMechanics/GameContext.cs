@@ -1,8 +1,7 @@
 using The_World.GameData.Areas;
 using The_World.GameData.Items;
-using The_World.GameData.GameMechanics;
 
-namespace The_World.GameData.Commands;
+namespace The_World.GameData.GameMechanics;
 
 public class GameContext
 {
