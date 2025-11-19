@@ -5,16 +5,15 @@ using The_World.GameData.Commands;
 using The_World.GameData.GameMechanics;
 
 Console.WriteLine("Enter player name:");
-var player = Player.CreateNewPlayer(Console.ReadLine()!, "");
+var player = Console.ReadLine()!;
 
-var currentArea = WorldBuilder.BuildWorld();
+var gameContext = WorldBuilder.BuildWorld(player);
 
-Console.WriteLine($"Welcome, {player.Name}, to The World!");
-Console.WriteLine($"You find yourself in the {currentArea.Name}.");
-Console.WriteLine(currentArea.Description);
+Console.WriteLine($"Welcome, {gameContext.Player.Name}, to The World!");
+Console.WriteLine($"You find yourself in the {gameContext.CurrentArea.Name}.");
+Console.WriteLine(gameContext.CurrentArea.Description);
 
 // Create game context and command parser
-var gameContext = new GameContext(player, currentArea);
 var commandParser = new CommandParser();
 
 while (gameContext.KeepPlaying)
