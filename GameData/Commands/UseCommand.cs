@@ -23,7 +23,7 @@ public class UseCommand : ICommand
         var item = context.Player.Inventory.FirstOrDefault(i => 
             i.Name.Equals(_itemName, StringComparison.OrdinalIgnoreCase));
    
-        if (item == null)
+        if (item is null)
         {
             Console.WriteLine("You don't have an item with that name!");
         }

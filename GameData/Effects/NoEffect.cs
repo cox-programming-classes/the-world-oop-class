@@ -2,7 +2,7 @@ using The_World.GameData.Commands;
 
 namespace The_World.GameData.Effects;
 
-public class NoEffect : IConsumableEffect
+public class NoEffect : IEffect
 {
     public string Apply(GameContext context)
     {

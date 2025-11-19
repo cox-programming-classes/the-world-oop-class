@@ -2,7 +2,7 @@ using The_World.GameData.Commands;
 
 namespace The_World.GameData.Effects;
 
-public class ManaRestoreEffect(int manaAmount) : IConsumableEffect
+public class ManaRestoreEffect(int manaAmount) : IEffect
 {
     private readonly int _manaAmount = manaAmount switch
     {

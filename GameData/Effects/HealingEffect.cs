@@ -3,7 +3,7 @@
 using The_World.GameData.Commands;
 namespace The_World.GameData.Effects;
 
-public class HealingEffect(int healAmount) : IConsumableEffect
+public class HealingEffect(int healAmount) : IEffect
 {
     private readonly int _healAmount = healAmount switch
     {

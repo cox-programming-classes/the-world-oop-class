@@ -1,8 +1,10 @@
 using The_World.GameData.Commands;
 
 namespace The_World.GameData.Effects;
-
-public interface IConsumableEffect
+/// <summary>
+/// 
+/// </summary>
+public interface IEffect
 {
     string Apply(GameContext context);
     string GetDescription();

@@ -49,7 +49,7 @@ public abstract record Item(string Name, string Description, double Weight)
     /// <param name="weight"> Weight in pounds </param>
     /// <param name="effect"> What the Consumable does to the Player </param>
     /// <returns></returns>
-    public static Consumable CreateConsumable(string name, string description, double weight, IConsumableEffect? effect)
+    public static Consumable CreateConsumable(string name, string description, double weight, IEffect? effect)
         => new(
             SanitizeName(name),
             SanitizeDescription(description),
@@ -114,7 +114,7 @@ public abstract record Item(string Name, string Description, double Weight)
     private static int SanitizeDefense(int defense) =>
         defense switch { < 0 => 0, _ => defense };
 
-    private static IConsumableEffect SanitizeEffect(IConsumableEffect? effect)
+    private static IEffect SanitizeEffect(IEffect? effect)
     {
         if (effect == null)
         {
@@ -157,7 +157,7 @@ public record Consumable(
     string Name,
     string Description, 
     double Weight,
-    IConsumableEffect Effect) : Item(Name, Description, Weight)
+    IEffect Effect) : Item(Name, Description, Weight)
 {
     public override string Look() => 
         $"{Name} (Effect: {Effect.GetDescription()}) \n{Description}";
