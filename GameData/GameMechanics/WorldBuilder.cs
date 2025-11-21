@@ -1,7 +1,8 @@
 using The_World.GameData.Areas;
 using The_World.GameData.Creatures;
-using The_World.GameData.Commands; // Add this for GameContext
-using The_World.GameData; // Add this for Player
+using The_World.GameData.Items;
+using static The_World.GameData.Creatures.CreatureFactory;
+using static The_World.GameData.Items.ItemFactory;
 
 namespace The_World.GameData.GameMechanics;
 
@@ -53,40 +54,8 @@ public class WorldBuilder
             .WithDescription("A stone dungeon with moss-covered walls. You can climb down to return to the cave below.")
             .WithCreature("dungeon_guard", BuildGoblinArchetype("Skeleton Warrior", "An ancient skeleton in rusted armor.", 3))
             .Build();
-
-        // Use the proper Builder pattern to construct the world
-        return WorldBuilder.Create()
-            .WithArea("forest", forestArea) // human-readable words are not good unique identifiers (i.e. key names); use e globally unique identifier (GUID.something) 
-            .WithArea("cave", caveArea)
-            .WithArea("field", fieldArea)
-            .WithArea("dungeon", dungeonArea)
-            .WithConnection("forest", "down", "cave", "up")
-            .WithConnection("cave", "east", "field", "west")
-            .WithConnection("cave", "climb", "dungeon", "down")
-            .WithStartingArea("forest")
-            .Build();
         
         return new GameContext(defaultPlayer, startingArea);
         
-    }
-    
-    /// <summary>
-    /// Helper method to build a Goblin creature archetype.
-    /// You might use this in multiple areas.
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="description"></param>
-    /// <returns></returns>
-    private static Creature BuildGoblinArchetype(
-        string name = "Goblin", 
-        string description = "A small, green humanoid creature with sharp teeth and a mischievous grin.",
-        int level = 1)
-    {
-        return Creature.CreateNewCreature(
-            name,
-            description,
-            new(10+(2*level), 0), // TODO: Stats should probably scale with level better
-            level,
-            5+(double.Exp(level/100.0)*10)); // TODO: XP scales with level this math sucks
     }
 }
