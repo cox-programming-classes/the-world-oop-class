@@ -1,3 +1,5 @@
+using The_World.GameData.Effects;
+
 namespace The_World.GameData.Items;
 
 /// <summary>
@@ -18,6 +20,8 @@ namespace The_World.GameData.Items;
 public abstract record Item(string Name, string Description, double Weight)
 {
     public abstract string Look();
+
+    #region Create Items
 
     /// <summary>
     /// Creates a new Weapon item with a name, description, weight, attackPower, and durability
@@ -45,7 +49,7 @@ public abstract record Item(string Name, string Description, double Weight)
     /// <param name="weight"> Weight in pounds </param>
     /// <param name="effect"> TODO:  WHAT DOES THIS MEAN!!! What the Consumable does to the Player </param>
     /// <returns></returns>
-    public static Consumable CreateConsumable(string name, string description, double weight, string effect)
+    public static Consumable CreateConsumable(string name, string description, double weight, IEffect? effect)
         => new(
             SanitizeName(name),
             SanitizeDescription(description),
@@ -110,8 +114,16 @@ public abstract record Item(string Name, string Description, double Weight)
     private static int SanitizeDefense(int defense) =>
         defense switch { < 0 => 0, _ => defense };
 
-    private static string SanitizeEffect(string? effect) =>
-        effect?.Trim() switch { null or "" => "Unknown Effect", _ => effect.Trim() };
+    private static IEffect SanitizeEffect(IEffect? effect)
+    {
+        if (effect == null)
+        {
+            return new NoEffect();
+        }
+
+        return effect;
+    }
+    #endregion
 }
 
 
@@ -145,10 +157,10 @@ public record Consumable(
     string Name,
     string Description, 
     double Weight,
-    string Effect) : Item(Name, Description, Weight)
+    IEffect Effect) : Item(Name, Description, Weight)
 {
     public override string Look() => 
-        $"{Name} (Effect: {Effect})\n{Description}";
+        $"{Name} (Effect: {Effect.GetDescription()}) \n{Description}";
 }
 
 /// <summary>

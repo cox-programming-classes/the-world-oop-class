@@ -1,5 +1,6 @@
-using The_World.GameData.Items;
-namespace The_World.GameData.GameMechanics;
+using The_World.GameData.Effects;
+
+namespace The_World.GameData.Items;
 
 public static class ItemFactory
 {
@@ -22,15 +23,6 @@ public static class ItemFactory
         int durability = 10)
     {
         return Item.CreateWeapon(name, description, weight, attackpower, durability);
-    }
-
-    public static Consumable BuildHealingHerbArchetype(
-        string name = "Healing herb",
-        string description = "A small herb known for its medicinal properties",
-        double weight = 0.2,
-        string effect = "+2 hp")
-    {
-        return Item.CreateConsumable(name, description, weight, effect);
     }
 
     // NEW WEAPON ARCHETYPES
@@ -93,31 +85,55 @@ public static class ItemFactory
     }
 
     // MORE CONSUMABLES
+    public static Consumable BuildHealingHerbArchetype(
+        string name = "Healing herb",
+        string description = "A small herb known for its medicinal properties",
+        double weight = 0.2,
+        int healAmount = 5)
+    {
+        return Item.CreateConsumable(name, description, weight, new HealingEffect(healAmount));
+    }
     public static Consumable BuildHealthPotionArchetype(
         string name = "health_potion",
         string description = "A red potion that restores vitality.",
         double weight = 0.5,
-        string effect = "+15 hp")
+        int healAmount = 15)
     {
-        return Item.CreateConsumable(name, description, weight, effect);
+        return Item.CreateConsumable(name, description, weight, new HealingEffect(healAmount));
+    }
+    public static Consumable BuildLargeHealthPotionArchetype(
+        string name = "large_health_potion",
+        string description = "A large red potion that restores vitality.",
+        double weight = 0.5,
+        int healAmount = 30)
+    {
+        return Item.CreateConsumable(name, description, weight, new HealingEffect(healAmount));
     }
 
     public static Consumable BuildManaPotionArchetype(
         string name = "mana_potion",
         string description = "A blue potion that restores magical energy.",
         double weight = 0.5,
-        string effect = "+10 mana")
+        int manaAmount = 10)
     {
-        return Item.CreateConsumable(name, description, weight, effect);
+        return Item.CreateConsumable(name, description, weight, new ManaRestoreEffect(manaAmount));
+    }
+    public static Consumable BuildLargeManaPotionArchetype(
+        string name = "mana_potion",
+        string description = "A Large blue potion that restores magical energy.",
+        double weight = 0.5,
+        int manaAmount = 20)
+    {
+        return Item.CreateConsumable(name, description, weight, new ManaRestoreEffect(manaAmount));
     }
 
     public static Consumable BuildBreadArchetype(
         string name = "bread",
         string description = "A simple loaf that fills your belly.",
         double weight = 0.3,
-        string effect = "+5 hp")
+        int healAmount = 2)
     {
-        return Item.CreateConsumable(name, description, weight, effect);
+        return Item.CreateConsumable(name, description, weight, new HealingEffect(healAmount));
     }
 
     // TOOL ARCHETYPES
@@ -169,33 +185,4 @@ public static class ItemFactory
     {
         return Item.CreateDecoration(name, description);
     }
-    // Add these to your ItemFactory class:
-
-    public static Decoration BuildRandomBoneArchetype(
-        string name = "random_bone",
-        string description = "A mysterious bone of unknown origin. You're not sure what creature this came from.")
-    {
-        return Item.CreateDecoration(name, description); 
-    }
-
-    public static Armor BuildWitchHatArchetype(
-        string name = "witch_hat",
-        string description = "A tall, pointed hat made of dark fabric. It seems to shimmer with magical energy.",
-        double weight = 0.5,
-        int defenseValue = 1)
-    {
-        return Item.CreateArmor(name, description, weight, defenseValue, ArmorSlot.HeadSlot); //boost mana when worn
-    }
-
-    public static Consumable BuildRaspberryBarArchetype(
-        string name = "raspberry_bar",
-        string description = "A sweet energy bar packed with dried raspberries. Looks delicious!",
-        double weight = 0.3,
-        string effect = "+8 hp, +3 energy")
-    {
-        return Item.CreateConsumable(name, description, weight, effect);
-    }
-
 }
-
-//consumables should (i think) increase health and stamina

@@ -55,7 +55,7 @@ public record Player(
                 _ => className.Trim()        // otherwise, use the trimmed className
             },
             1, // Start at Level 1 (experience gets calculated automagically)
-            new(100, 50)); // Starting mana
+            new(){Health = 100, Mana = 50}); // Starting mana
 }
 
 /// <summary>
