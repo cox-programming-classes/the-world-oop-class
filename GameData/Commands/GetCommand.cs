@@ -10,13 +10,19 @@ public class GetCommand : ICommand
     {
         _itemName = itemName?.Trim() ?? "";
     }
-
-    public void Execute(GameContext context)
+    
+    public Context Execute(Context c)
     {
+        if (c is not GameContext context)
+        {
+            Console.WriteLine("You can't do that right now");
+            return c;
+        }
+
         if (string.IsNullOrWhiteSpace(_itemName))
         {
             Console.WriteLine("Get what? Try 'get [item]'");
-            return;
+            return c;
         }
 
         if (context.CurrentArea.Items.TryGetValue(_itemName, out var item))
@@ -29,6 +35,7 @@ public class GetCommand : ICommand
         {
             Console.WriteLine($"There is no '{_itemName}' here to pick up.");
         }
+        return c;
     }
 
     public string GetHelpText() => "get [item] - Pick up an item";
