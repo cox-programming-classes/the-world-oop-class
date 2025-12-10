@@ -13,8 +13,14 @@ public record Dice(int Count = 1, int Sides = 6, int Modifier = 0)
 {
     // Common Dice types TODO: Expand as needed
     public static readonly Dice Coin = new(Sides: 2);
+    public static readonly Dice D4 = new(Sides: 4);
     public static readonly Dice D6 = new();
+    public static readonly Dice D8 = new(Sides: 8);
+    public static readonly Dice D10 = new(Sides: 10);
+    public static readonly Dice D12 = new(Sides: 12);
+    public static readonly Dice D20 = new(Sides: 20);
 
+    
     public int Roll()
     {
         var sum = Modifier;
