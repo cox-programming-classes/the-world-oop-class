@@ -1,6 +1,8 @@
 using System;
 using The_World.GameData;
 using The_World.GameData.Creatures;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace The_World.GameData.GameMechanics;
 
@@ -33,27 +35,54 @@ public record PlayerTurnState : CombatState
 
     private CombatState HandlePlayerAttack(CombatContext combat)
     {
+        // Show available targets
+        Console.WriteLine("Choose your target:");
+        for (int i = 0; i < combat.Enemies.Count; i++)
+        {
+            var enemy = combat.Enemies[i];
+            Console.WriteLine($"{i + 1}. {enemy.Name} (Health: {enemy.Stats.Health})");
+        }
+
+        // Get player's target choice
+        var targetInput = Console.ReadLine()?.Trim();
+        if (!int.TryParse(targetInput, out int targetIndex) || 
+            targetIndex < 1 || targetIndex > combat.Enemies.Count)
+        {
+            Console.WriteLine("Invalid target! Turn wasted.");
+            return new EnemyTurnState();
+        }
+
+        var targetEnemy = combat.Enemies[targetIndex - 1];
+        
         var attackRoll = new Dice(1, 20).Roll(); // d20 attack roll
         var damage = new Dice(1, 6, 2).Roll(); // 1d6+2 damage
         
-        Console.WriteLine($"You attack! (Roll: {attackRoll})");
+        Console.WriteLine($"You attack {targetEnemy.Name}! (Roll: {attackRoll})");
         
         if (attackRoll >= 10) // Simple hit threshold
         {
             // Create new StatChart with reduced health
-            var newHealth = Math.Max(0, combat.Enemy.Stats.Health - damage);
-            var newStats = new StatChart { Health = newHealth, Mana = combat.Enemy.Stats.Mana };
+            var newHealth = Math.Max(0, targetEnemy.Stats.Health - damage);
+            var newStats = new StatChart { Health = newHealth, Mana = targetEnemy.Stats.Mana };
             
-            // Create new creature with updated stats
-            combat.Enemy = combat.Enemy with { Stats = newStats };
+            // Create new creature with updated stats and replace in list
+            var updatedEnemy = targetEnemy with { Stats = newStats };
+            combat.Enemies[targetIndex - 1] = updatedEnemy;
             
-            Console.WriteLine($"Hit! You deal {damage} damage to {combat.Enemy.Name}!");
-            Console.WriteLine($"{combat.Enemy.Name} has {combat.Enemy.Stats.Health} health remaining.");
+            Console.WriteLine($"Hit! You deal {damage} damage to {updatedEnemy.Name}!");
+            Console.WriteLine($"{updatedEnemy.Name} has {updatedEnemy.Stats.Health} health remaining.");
             
-            if (combat.Enemy.Stats.Health <= 0)
+            if (updatedEnemy.Stats.Health <= 0)
             {
-                combat.Player.AddExperience(combat.Enemy.XP);
-                return new CombatEndState($"You defeated {combat.Enemy.Name}! Gained {combat.Enemy.XP} XP!");
+                Console.WriteLine($"{updatedEnemy.Name} is defeated!");
+                combat.Player.AddExperience(updatedEnemy.XP);
+                combat.Enemies.RemoveAt(targetIndex - 1); // Remove defeated enemy
+                
+                // Check if all enemies are defeated
+                if (combat.Enemies.Count == 0)
+                {
+                    return new CombatEndState($"Victory! You defeated all enemies! Total XP gained this combat!");
+                }
             }
         }
         else
@@ -82,21 +111,30 @@ public record PlayerTurnState : CombatState
 
 public record EnemyTurnState : CombatState
 {
+    private int currentEnemyIndex = 0;
+
     public override CombatState HandleTurn(CombatContext combat)
     {
-        Console.WriteLine($"\n--- {combat.Enemy.Name}'s Turn ---");
+        // Each enemy gets a turn
+        if (currentEnemyIndex >= combat.Enemies.Count)
+        {
+            // All enemies have acted, reset for next round
+            return new PlayerTurnState();
+        }
+
+        var currentEnemy = combat.Enemies[currentEnemyIndex];
+        Console.WriteLine($"\n--- {currentEnemy.Name}'s Turn ---");
         
         var attackRoll = new Dice(1, 20).Roll();
         var damage = new Dice(1, 4, 1).Roll(); // Enemy does 1d4+1 damage
         
-        Console.WriteLine($"{combat.Enemy.Name} attacks! (Roll: {attackRoll})");
+        Console.WriteLine($"{currentEnemy.Name} attacks! (Roll: {attackRoll})");
         
         if (attackRoll >= 8) // Enemies have easier time hitting
         {
             if (combat.PlayerDefending)
             {
                 damage = Math.Max(1, damage / 2); // Defending reduces damage
-                combat.PlayerDefending = false; // Reset defending state
                 Console.WriteLine("Your defense reduces the damage!");
             }
             
@@ -105,7 +143,7 @@ public record EnemyTurnState : CombatState
             var newHealth = Math.Max(0, currentHealth - damage);
             combat.Player.Stats.Health = newHealth;
             
-            Console.WriteLine($"Hit! {combat.Enemy.Name} deals {damage} damage to you!");
+            Console.WriteLine($"Hit! {currentEnemy.Name} deals {damage} damage to you!");
             Console.WriteLine($"You have {combat.Player.Stats.Health} health remaining.");
             
             if (combat.Player.Stats.Health <= 0)
@@ -115,13 +153,24 @@ public record EnemyTurnState : CombatState
         }
         else
         {
-            Console.WriteLine($"{combat.Enemy.Name}'s attack misses!");
+            Console.WriteLine($"{currentEnemy.Name}'s attack misses!");
+        }
+
+        // Move to next enemy
+        currentEnemyIndex++;
+        
+        // If more enemies need to act, stay in EnemyTurnState
+        if (currentEnemyIndex < combat.Enemies.Count)
+        {
+            return new EnemyTurnState { currentEnemyIndex = currentEnemyIndex };
         }
         
+        // All enemies acted, reset defending state and go to player turn
+        combat.PlayerDefending = false;
         return new PlayerTurnState();
     }
 
-    public override string GetStateDescription() => "Enemy's turn to act";
+    public override string GetStateDescription() => "Enemies' turn to act";
 }
 
 public record CombatEndState(string EndMessage) : CombatState
@@ -141,24 +190,39 @@ public record CombatEndState(string EndMessage) : CombatState
 public class CombatContext
 {
     public Player Player { get; set; }
-    public Creature Enemy { get; set; }
+    public List<Creature> Enemies { get; set; } // Changed from single Enemy to List<Creature>
     public bool IsActive { get; set; } = true;
     public bool PlayerDefending { get; set; } = false;
     public CombatState CurrentState { get; set; }
 
+    // Constructor for single enemy (backwards compatibility)
     public CombatContext(Player player, Creature enemy)
     {
         Player = player;
-        Enemy = enemy;
-        CurrentState = new PlayerTurnState(); // Combat starts with player turn
+        Enemies = new List<Creature> { enemy };
+        CurrentState = new PlayerTurnState();
+    }
+
+    // Constructor for multiple enemies
+    public CombatContext(Player player, List<Creature> enemies)
+    {
+        Player = player;
+        Enemies = new List<Creature>(enemies); // Create a copy to avoid external modifications
+        CurrentState = new PlayerTurnState();
     }
 
     public void RunCombat()
     {
-        Console.WriteLine($"\n🗡️ Combat begins with {Enemy.Name}! 🗡️");
-        Console.WriteLine($"Your Health: {Player.Stats.Health} | {Enemy.Name} Health: {Enemy.Stats.Health}");
+        var enemyNames = string.Join(", ", Enemies.Select(e => e.Name));
+        Console.WriteLine($"\n🗡️ Combat begins with {enemyNames}! 🗡️");
+        Console.WriteLine($"Your Health: {Player.Stats.Health}");
         
-        while (IsActive)
+        foreach (var enemy in Enemies)
+        {
+            Console.WriteLine($"{enemy.Name} Health: {enemy.Stats.Health}");
+        }
+        
+        while (IsActive && Enemies.Count > 0)
         {
             CurrentState = CurrentState.HandleTurn(this);
         }
