@@ -11,12 +11,18 @@ public class GoCommand : ICommand
         _direction = direction?.Trim() ?? "";
     }
 
-    public void Execute(GameContext context)
+    public Context Execute(Context c)
     {
+        if (c is not GameContext context)
+        {
+            Console.WriteLine("You can't do that right now~");
+            return c;
+        }
+        
         if (string.IsNullOrWhiteSpace(_direction))
         {
             Console.WriteLine("Go where? Try 'go [direction]'");
-            return;
+            return c;
         }
 
         if (context.CurrentArea.ConnectedAreas.TryGetValue(_direction, out var newArea))
@@ -29,6 +35,8 @@ public class GoCommand : ICommand
         {
             Console.WriteLine($"You can't go '{_direction}' from here.");
         }
+
+        return context;
     }
 
     public string GetHelpText() => "go [direction] - Move to connected area";

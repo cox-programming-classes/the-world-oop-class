@@ -1,25 +1,17 @@
 namespace The_World.GameData.Commands;
 
-public class CommandParser : IParser
+public class LoseFightCommandParser : IParser
 {
     private readonly Dictionary<string, Func<string, ICommand>> _commandFactories;
-
-    public CommandParser()
+    
+    public LoseFightCommandParser()
     {
         _commandFactories = new Dictionary<string, Func<string, ICommand>>
         {
-            ["look"] = arg => new LookCommand(arg),
-            ["go"] = arg => new GoCommand(arg),
-            ["get"] = arg => new GetCommand(arg),
-            ["inventory"] = _ => new InventoryCommand(),
-            ["attack"] = arg => new AttackCommand(arg),     
-            ["use"] = arg => new UseCommand(arg),          
-            ["help"] = _ => new HelpCommand(this),
-            ["quit"] = _ => new QuitCommand()
+            ["look"] = arg => new LookCommand(arg)
         };
     }
-
-
+    
     public ICommand Parse(string input)
     {
         if (string.IsNullOrWhiteSpace(input))
@@ -36,6 +28,6 @@ public class CommandParser : IParser
 
     public List<string> GetAvailableCommands()
     {
-        return _commandFactories.Keys.ToList();
+        throw new NotImplementedException();
     }
 }

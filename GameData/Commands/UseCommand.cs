@@ -13,12 +13,18 @@ public class UseCommand : ICommand
         _itemName = itemName?.Trim() ?? "";
     }
 
-    public void Execute(GameContext context)
+    public Context Execute(Context c)
     {
+        if (c is not GameContext context)
+        {
+            Console.WriteLine("You can't do that right now!");
+            return c;
+        }
+        
         if (string.IsNullOrWhiteSpace(_itemName))
         {
             Console.WriteLine("Use what? Try 'use [item]'");
-            return;
+            return context;
         }
 
         // Find the item in the player's inventory
@@ -43,7 +49,8 @@ public class UseCommand : ICommand
         {
             Console.WriteLine("Please don't eat that :(");
         }
-        
+
+        return context;
     }
 
     public string GetHelpText() => "use [item] - Use an item";

@@ -1,13 +1,12 @@
 using The_World.GameData.Areas;
+using The_World.GameData.Commands;
 using The_World.GameData.Items;
 
 namespace The_World.GameData.GameMechanics;
 
-public class GameContext
+public class GameContext : Context
 {
-    public Player Player { get; set; }
     public Area CurrentArea { get; set; }
-    public bool KeepPlaying { get; set; } = true;
     
     // NEW: A Library of Items that can be spawned into the world at runtime
     public Dictionary<string, Func<Item>> ItemLibrary { get; private set; } = new();
@@ -16,6 +15,7 @@ public class GameContext
     {
         Player = player;
         CurrentArea = currentArea;
+        Parser = new CommandParser();
         PopulateItemLibrary(); // Initialize the library when GameContext is created
     }
     

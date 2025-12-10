@@ -11,9 +11,10 @@ public class UnknownCommand : ICommand
         _commandName = commandName;
     }
 
-    public void Execute(GameContext context)
+    public Context Execute(Context c)
     {
         Console.WriteLine($"Unknown command: {_commandName}");
+        return c;
     }
 
     public string GetHelpText() => "Unknown command";

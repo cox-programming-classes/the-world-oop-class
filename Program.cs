@@ -14,17 +14,18 @@ Console.WriteLine($"You find yourself in the {gameContext.CurrentArea.Name}.");
 Console.WriteLine(gameContext.CurrentArea.Description);
 
 // Create game context and command parser
-var commandParser = new CommandParser();
+// var commandParser = new CommandParser();
 
-while (gameContext.KeepPlaying)
+Context currentContext = gameContext;
+while (currentContext.KeepPlaying)
 {
     Console.Write(">> ");
     var input = Console.ReadLine()?.Trim().ToLower();
     if (string.IsNullOrWhiteSpace(input))
         continue;
         
-    var command = commandParser.Parse(input);
-    command.Execute(gameContext);
+    var command = currentContext.Parser.Parse(input);
+    currentContext = command.Execute(currentContext);
 }
 
 // TODO: Consider implementing an Event System for game events (e.g., player leveling up, creature encounters, etc.).
