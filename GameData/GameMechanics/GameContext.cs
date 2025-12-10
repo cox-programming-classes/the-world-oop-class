@@ -78,3 +78,6 @@ public class GameContext
         return ItemLibrary.Keys.ToList();
     }
 }
+
+//job: keeps track of the current state of the game
+//state: the current values of all objects in a context 

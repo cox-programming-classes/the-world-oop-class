@@ -1,3 +1,4 @@
+using System;
 using The_World.GameData.GameMechanics;
 
 namespace The_World.GameData.Commands;
@@ -21,9 +22,15 @@ public class AttackCommand : ICommand
 
         if (context.CurrentArea.Creatures.TryGetValue(_creatureName, out var creature))
         {
-            // TODO: Implement actual combat mechanics
-            Console.WriteLine($"You attack the {creature.Name}!");
-            Console.WriteLine("Combat system not yet implemented.");
+            // Start combat using the new combat system!
+            var combat = new CombatContext(context.Player, creature);
+            combat.RunCombat();
+            
+            // Remove defeated creatures from the area
+            if (combat.Enemy.Stats.Health <= 0)
+            {
+                context.CurrentArea.Creatures.Remove(_creatureName);
+            }
         }
         else
         {
