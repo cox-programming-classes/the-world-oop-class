@@ -7,8 +7,7 @@ namespace The_World.GameData.Creatures;
 /// </summary>
 /// <param name="Name">The creature's name</param>
 /// <param name="Description">How the creature appears</param>
-/// <param name="Health">HP for fighting</param>
-/// <param name="Mana">Magic level</param>
+/// <param name="Stats">HP for fighting, Magic level</param>
 /// <param name="Level">Creature's level</param>
 /// <param name="XP">How much Experience the Creature grants</param>
 public record Creature(

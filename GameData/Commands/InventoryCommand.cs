@@ -4,7 +4,7 @@ namespace The_World.GameData.Commands;
 
 public class InventoryCommand : ICommand
 {
-    public void Execute(GameContext context)
+    public Context Execute(Context context)
     {
         if (context.Player.Inventory.Count == 0)
         {
@@ -18,7 +18,8 @@ public class InventoryCommand : ICommand
                 Console.WriteLine($"  {item.Name} ({item.Weight} lbs)");
             }
         }
+        return context;
     }
 
-    public string GetHelpText() => "inventory - Show your items";
+    public string GetHelpText() => "inventory - List what items you are carrying";
 }

@@ -11,8 +11,14 @@ public class LookCommand : ICommand
         _target = target?.Trim() ?? "";
     }
 
-    public void Execute(GameContext context)
+    public Context Execute(Context c)
     {
+        if (c is not GameContext context)
+        {
+            Console.WriteLine("You can't do that right now.");
+            return c;
+        }
+
         if (string.IsNullOrWhiteSpace(_target))
         {
             Console.WriteLine(context.CurrentArea.LookAround());
@@ -21,7 +27,9 @@ public class LookCommand : ICommand
         {
             Console.WriteLine(context.CurrentArea.LookAt(_target));
         }
+
+        return c;
     }
 
-    public string GetHelpText() => "look [item] - Look around or at specific item";
+    public string GetHelpText() => "look [item] - Look around at the current area or at specific item";
 }
