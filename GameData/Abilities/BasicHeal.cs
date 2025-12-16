@@ -1,24 +1,23 @@
-/* GameData/Abilities/BasicAttackAbility.cs */
-using The_World.GameData.GameMechanics;
 using The_World.GameData.Effects;
+using The_World.GameData.GameMechanics;
 
 namespace The_World.GameData.Abilities;
 
-public class BasicAttack : IAbilities
+public class BasicHeal : IAbilities
 {
-    public string Name => "Basic Attack";
-    public string Description => "A simple physical attack that deals moderate damage";
-    public int ManaCost => 0; // Basic attacks don't cost mana
-    
-    private readonly int _baseDamage;
+    public string Name => "Basic Heal";
+    public string Description => "A simple healing spell, costs 10 mana to apply";
+    public int ManaCost => 10; // Basic attacks don't cost mana
 
-    public BasicAttack(int baseDamage = 5)
+    private readonly int _baseHealing;
+
+    public BasicHeal(int baseHealing = 5)
     {
-        _baseDamage = baseDamage switch
+        _baseHealing = baseHealing switch
         {
             < 1 => 1,
             > 50 => 50,
-            _ => baseDamage
+            _ => baseHealing
         };
     }
 
@@ -27,7 +26,12 @@ public class BasicAttack : IAbilities
         // Can always use basic attack if target exists
         if (string.IsNullOrWhiteSpace(target))
             return false;
-        
+        else if (context.Player.Stats.Mana < 10)
+        {
+            Console.WriteLine("You don't have enough mana to do this!");
+            return false;
+        }
+
         return context.CurrentArea.Creatures.ContainsKey(target);
     }
 
@@ -35,14 +39,14 @@ public class BasicAttack : IAbilities
     {
         if (!CanUse(context, target))
         {
-            return string.IsNullOrWhiteSpace(target) 
-                ? "Attack what? Specify a target." 
+            return string.IsNullOrWhiteSpace(target)
+                ? "Attack what? Specify a target."
                 : $"There is no '{target}' here to attack.";
         }
 
         // Use the Strategy Pattern - create the appropriate effect
-        var damageEffect = new DamageEffect(_baseDamage, target);
-        
+        var damageEffect = new HealingEffect(_baseHealing);
+
         // Apply the effect and return the result
         return damageEffect.Apply(context);
     }

@@ -22,5 +22,5 @@ public class HealingEffect(int healAmount) : IEffect
             ? $"You feel healthier! Restored {actualHealing} health points."
             : "You're already at full health!";
     }
-    public string GetDescription() => $"Restores {_healAmount} health points";
+    public string GetDescription() => $"Restores up to {_healAmount} health points";
 }
