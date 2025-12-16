@@ -1,4 +1,6 @@
 /* GameData/Abilities/BasicAttackAbility.cs */
+
+using The_World.GameData.Creatures;
 using The_World.GameData.GameMechanics;
 using The_World.GameData.Effects;
 
@@ -11,6 +13,7 @@ public class BasicAttack : IAbilities
     public int ManaCost => 0; // Basic attacks don't cost mana
     
     private readonly int _baseDamage;
+    private readonly Creature _target;
 
     public BasicAttack(int baseDamage = 5)
     {
@@ -22,22 +25,22 @@ public class BasicAttack : IAbilities
         };
     }
 
-    public bool CanUse(GameContext context, string target = "")
+    public bool CanUse(Context context, Creature target)
     {
         // Can always use basic attack if target exists
-        if (string.IsNullOrWhiteSpace(target))
-            return false;
         
-        return context.CurrentArea.Creatures.ContainsKey(target);
+        if (context is FightContext fightContext)
+        {
+            return fightContext.Creatures.Contains(target);
+        }
+        return false;
     }
 
-    public string Use(GameContext context, string target = "")
+    public string Use(Context context, Creature target)
     {
-        if (!CanUse(context, target))
+        if (!CanUse(context,  target))
         {
-            return string.IsNullOrWhiteSpace(target) 
-                ? "Attack what? Specify a target." 
-                : $"There is no '{target}' here to attack.";
+            return $"There is no '{target}' here to attack.";
         }
 
         // Use the Strategy Pattern - create the appropriate effect

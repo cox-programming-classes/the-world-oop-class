@@ -1,6 +1,7 @@
 using System;
 using The_World.GameData.GameMechanics;
 using System.Linq;
+using The_World.GameData.Abilities;
 using The_World.GameData.Creatures;
 using The_World.GameData.Effects;
 
@@ -33,15 +34,20 @@ public class AttackCommand : ICommand
     private Context ExecuteOnFightContext(FightContext context)
     {
         // TODO:  Write attack for the Fight Context~
-
+        // Note: There's no other attacks right now. Not really sure how to make this once we get more though
+        var attack = new BasicAttack();
         var targetCreature = SelectTarget(context);
         if (targetCreature == null)
         {
             Console.WriteLine("You missed!");
             return context;
         }
-        var result = _effect.ApplyToCreature(targetCreature, context.Game);
-        Console.WriteLine(result);
+
+        attack.Use(context, targetCreature);
+        
+        //TODO: figure out how to make this say how much damage the player dealt
+        Console.WriteLine($"You dealt [????] damage to the {_creatureName}!");
+        
         // calculating the damage dealt-influenced by player level and creature level (int) 
         //stole the damage code for me --Anne
         

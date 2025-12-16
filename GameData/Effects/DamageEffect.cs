@@ -8,7 +8,7 @@ public class DamageEffect : IEffect, ITargetableEffect
 {
     private readonly int _baseDamage;
 
-    public DamageEffect(int baseDamage)
+    public DamageEffect(int baseDamage, Creature target)
     {
         _baseDamage = baseDamage switch
         {
@@ -42,5 +42,5 @@ public class DamageEffect : IEffect, ITargetableEffect
         return $"You deal {finalDamage} damage to the {target.Name}!";
     }
 
-    public string GetDescription() => $"Deals {_baseDamage} base damage to target";
+    public string GetDescription() => $"Deals {_baseDamage} base damage to target, scales with player level and creature level.";
 }

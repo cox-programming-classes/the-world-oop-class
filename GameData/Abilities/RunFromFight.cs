@@ -1,3 +1,4 @@
+using The_World.GameData.Effects;
 using The_World.GameData.GameMechanics;
 
 namespace The_World.GameData.Abilities;
@@ -27,7 +28,7 @@ public class RunFromFight : IAbilities
         return true;
     }
 
-    public string Use(GameContext context, string target = "")
+    public string Use(Context context, string target = "")
     {
         if (!CanUse(context, target))
         {
@@ -41,13 +42,13 @@ public class RunFromFight : IAbilities
         if (roll <= _successChance)
         {
             // Success! Create a FleeEffect that transitions states
-            var fleeEffect = new FleeEffect(true);
+            var fleeEffect = new FleeEffect(context, true);
             return fleeEffect.Apply(context);
         }
         else
         {
             // Failed to escape
-            var fleeEffect = new FleeEffect(false);
+            var fleeEffect = new FleeEffect(context, false);
             return fleeEffect.Apply(context);
         }
     }
