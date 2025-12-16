@@ -1,39 +1,46 @@
 /* GameData/Effects/DamageEffect.cs */
 using The_World.GameData.GameMechanics;
+using The_World.GameData.Creatures;
 
 namespace The_World.GameData.Effects;
 
-public class DamageEffect : IEffect
+public class DamageEffect : IEffect, ITargetableEffect
 {
-    private readonly int _damage;
-    private readonly string _targetName;
+    private readonly int _baseDamage;
 
-    public DamageEffect(int damage, string targetName = "")
+    public DamageEffect(int baseDamage)
     {
-        _damage = damage switch
+        _baseDamage = baseDamage switch
         {
             < 1 => 1,
-            //no maximum right now
-            _ => damage
+            _ => baseDamage
         };
-        _targetName = targetName?.Trim() ?? "";
     }
 
-    public string Apply(GameContext context)
+    // For IEffect - when applied to player (maybe for self-damage?)
+    public string Apply(Context context)
     {
-        if (string.IsNullOrWhiteSpace(_targetName))
-        {
-            return "No target specified for attack!";
-        }
-
-        if (context.CurrentArea.Creatures.TryGetValue(_targetName, out var creature))
-        {
-            // TODO: Implement actual damage to creature stats when combat system is ready
-            return $"You deal {_damage} damage to the {creature.Name}!";
-        }
-        
-        return $"There is no '{_targetName}' here to attack.";
+        return "You can't damage yourself with this!";
     }
 
-    public string GetDescription() => $"Deals {_damage} damage to target";
+    // For ITargetableEffect - when applied to creatures
+    public string ApplyToCreature(Creature target, Context context)
+    {
+        // Calculate damage using your complex formula
+        var randomNumber = Dice.D6.Roll();
+        var playerLevel = context.Player.Level;
+        var creatureLevel = target.Level;
+        
+        // Your damage calculation
+        var levelDifference = creatureLevel - playerLevel;
+        var damageMultiplier = Math.Pow(2, (randomNumber * 2 - levelDifference));
+        var finalDamage = (int)Math.Max(1, _baseDamage * damageMultiplier);
+
+        // Apply damage to the creature
+        target.Stats.Health -= finalDamage;
+        
+        return $"You deal {finalDamage} damage to the {target.Name}!";
+    }
+
+    public string GetDescription() => $"Deals {_baseDamage} base damage to target";
 }

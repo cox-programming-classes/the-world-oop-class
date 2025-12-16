@@ -11,7 +11,7 @@ public class HealingEffect(int healAmount) : IEffect
         _ => healAmount
     };
 
-    public string Apply(GameContext context)
+    public string Apply(Context context)
     {
         var oldHealth = context.Player.Stats.Health;
         context.Player.Stats.RestoreHealth(healAmount);

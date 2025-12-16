@@ -11,7 +11,7 @@ public class ManaRestoreEffect(int manaAmount) : IEffect
         > 150 => throw new ArgumentException("Restored mana amount cannot exceed 150."),
         _ => manaAmount
     };
-    public string Apply(GameContext context)
+    public string Apply(Context context)
     {
         var oldMana = context.Player.Stats.Mana;
         context.Player.Stats.RestoreHealth(manaAmount);
