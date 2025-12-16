@@ -1,5 +1,6 @@
 using The_World.GameData.Areas;
 using The_World.GameData.Creatures;
+using The_World.GameData.NPCs;
 
 namespace The_World.GameData.GameMechanics;
 
@@ -25,6 +26,8 @@ public class WorldBuilder
                 BuildGoblinArchetype("Goblin Warrior", "A fierce goblin clad in makeshift armor, wielding a crude weapon.", 2))
             .WithItem("rusty_sword", 
                 new("Rusty Sword", "An old and worn sword, still sharp enough to be dangerous.", 3.5))
+            .Build();
+            .WithNPC("merchant", NPCFactory.CreateBasicMerchant("Forest Trader", "A traveling merchant who braves the dangerous forest."))
             .Build();
         
         

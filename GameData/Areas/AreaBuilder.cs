@@ -1,5 +1,6 @@
 using The_World.GameData.Creatures;
 using The_World.GameData.Items;
+using The_World.GameData.NPCs;
 
 namespace The_World.GameData.Areas;
 
@@ -24,6 +25,7 @@ public class AreaBuilder
                 "", 
                 [],
                 [], 
+                [],
                 [])
         };
         return builder;
@@ -118,6 +120,29 @@ public class AreaBuilder
             throw new ArgumentNullException(nameof(area), "Connected Area cannot be null.");
         if(!_area.ConnectedAreas.TryAdd(key, area))
             throw new ArgumentException($"A connected area with the key '{key}' already exists in the area");
+        return this;
+    }
+    
+    /// <summary>
+    /// Adds an NPC to the Area.
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="npc"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="ArgumentException"></exception>
+    public AreaBuilder WithNPC(string key, NPC npc)
+    {
+        // TODO: Validate Key Naming Rules!
+        if(string.IsNullOrWhiteSpace(key))
+            throw new ArgumentNullException(nameof(key), "NPC key cannot be null or empty.");
+    
+        if(npc is null)
+            throw new ArgumentNullException(nameof(npc), "NPC cannot be null.");
+    
+        if(!_area.NPCs.TryAdd(key, npc))
+            throw new ArgumentException($"An NPC with the key '{key}' already exists in the area");
+    
         return this;
     }
 
