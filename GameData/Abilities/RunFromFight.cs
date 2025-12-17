@@ -42,15 +42,12 @@ public class RunFromFight : IAbilities
         if (roll <= _successChance)
         {
             // Success! Create a FleeEffect that transitions states
-            var fleeEffect = new FleeEffect(context, true);
-            return fleeEffect.Apply(context);
+            return "DO THIS LATER";
         }
         else
         {
             // Failed to escape
-            var fleeEffect = new FleeEffect(context, false);
-            return fleeEffect.Apply(context);
+            return "DO THIS LATER";
         }
     }
-}
 }
