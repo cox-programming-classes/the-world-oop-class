@@ -173,14 +173,17 @@ public class FightCommand : ICommand
             if (updatedCreature.Stats.Health <= 0)
             {
                 Console.WriteLine($"{updatedCreature.Name} is defeated!");
+    
+                // Give XP and currency rewards
                 context.Player.AddExperience(updatedCreature.XP);
+                var goldReward = updatedCreature.Level * 5; // 5 gold per creature level
+                context.Player.Money.Earn(goldReward);
+    
+                Console.WriteLine($"You gained {updatedCreature.XP} XP and {goldReward} gold!");
+                Console.WriteLine($"You now have {context.Player.Money}.");
+    
                 context.Creatures.RemoveAt(targetIndex);
-                
-                if (context.Creatures.Count == 0)
-                {
-                    Console.WriteLine("Victory! All enemies defeated!");
-                    return context.Game; // Return to game context
-                }
+                // ... rest of existing code stays the same
             }
         }
         else

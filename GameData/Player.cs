@@ -6,9 +6,10 @@ namespace The_World.GameData;
 /// </summary>
 public record Player(
     string Name,
-    string Class, // mmmm this one smells funny... TODO: Research - Player Classes and how to implement them
-    PlayerLevel Level, // Player Level!
-    StatChart Stats)
+    string Class,
+    PlayerLevel Level,
+    StatChart Stats,
+    Currency Money)
 {
     public int NumberOfLives { get; set; } = 3;
     
@@ -17,6 +18,11 @@ public record Player(
     /// But ONLY within this class.
     /// </summary>
     public PlayerLevel Level { get; private set; } = Level;
+
+    /// <summary>
+    /// The Player's currency for trading with merchants
+    /// </summary>
+    public Currency Money { get; private set; } = Money;
 
     /// <summary>
     /// Encapsulate the ability to Add experience to the Player's level.
@@ -30,15 +36,6 @@ public record Player(
     /// </summary>
     public List<Item> Inventory { get; private set; } = [];
 
-
-    /*
-     * TODO:  Stats management (level up increases stats?)
-     * the Stats property is currently immutable from outside,
-     * but we may want to add methods to modify stats as the player levels up.
-     * So, treat it in the same way as Level.
-     */
-
-
     /// <summary>
     /// Factory method to create a new player with default starting values.
     /// </summary>
@@ -47,19 +44,20 @@ public record Player(
     /// <returns>a new Player instance</returns>
     public static Player CreateNewPlayer(string name, string className)
         => new Player(
-            name?.Trim() switch // switch on the provided `name`
+            name?.Trim() switch 
             {
-                null or "" => "Unknown Hero", // if name is null or empty, use "Unknown Hero"
-                _ => name.Trim() // otherwise, use the trimmed name
+                null or "" => "Unknown Hero",
+                _ => name.Trim()
             },
-            className?.Trim() switch // switch on the provided `className`
+            className?.Trim() switch 
             {
-                null or "" => "Warrior", // if className is null or empty, use "Warrior"
-                _ => className.Trim() // otherwise, use the trimmed className
+                null or "" => "Warrior",
+                _ => className.Trim()
             },
-            1, // Start at Level 1 (experience gets calculated automagically)
-            new() { Health = 100, Mana = 50 } //starting mana 
-            ); //starting number of lives
+            1, // Level
+            new() { Health = 100, Mana = 50 }, // Stats
+            new Currency(50) // Starting money
+        );
 }
 
 /// <summary>
@@ -139,6 +137,7 @@ public record PlayerLevel(int Value = 1, double Experience = 0.0)
     /// <returns></returns>
     public static PlayerLevel operator +(PlayerLevel level, double experiencePoints)
         => level.Experience + experiencePoints; 
+    
 }
 
 

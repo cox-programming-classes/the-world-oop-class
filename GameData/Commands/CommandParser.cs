@@ -12,9 +12,11 @@ public class CommandParser : IParser
             ["go"] = arg => new GoCommand(arg),
             ["get"] = arg => new GetCommand(arg),
             ["inventory"] = _ => new InventoryCommand(),
-            ["attack"] = arg => new AttackCommand(arg),     
+            ["attack"] = arg => new AttackCommand(),     
             ["use"] = arg => new UseCommand(arg),          
             ["help"] = _ => new HelpCommand(this),
+            ["money"] = _ => new MoneyCommand(),
+            ["buy"] = arg => new BuyCommand(arg), 
             ["quit"] = _ => new QuitCommand()
         };
     }
