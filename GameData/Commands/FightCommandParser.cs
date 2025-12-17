@@ -251,8 +251,8 @@ public class FightCommand : ICommand
             Console.WriteLine($"You use the {selectedItem.Name} during combat!");
             
             // Apply effect - need to create GameContext temporarily for effect application
-            var tempGameContext = new GameContext(context.Player, context.Game.CurrentArea);
-            string result = consumable.Effect.Apply(tempGameContext);
+            //var tempGameContext = new GameContext(context.Player, context.Game.CurrentArea);
+            string result = consumable.Effect.Apply(context.Game);
             Console.WriteLine(result);
 
             // Process enemy turns after using item
