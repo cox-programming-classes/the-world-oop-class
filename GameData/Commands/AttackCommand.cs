@@ -23,40 +23,57 @@ public class AttackCommand : ICommand
 
     private Context ExecuteOnFightContext(FightContext context)
     {
-        // TODO:  Write attack for the Fight Context~
-        
         var targetCreature = SelectTarget(context);
         if (targetCreature == null)
         {
-            Console.WriteLine("You missed!");
-            return context; 
+            Console.WriteLine("There are no enemies left to fight!");
+            return new WinFightContext(context.Player, [], context.Game);
         }
         
-        // calculating the damage dealt-influenced by player level and creature level (int) 
+        // Your existing damage calculation
         var randomNumber = Dice.D6.Roll();
         var playerLevel = context.Player.Level;
         var creatureLevel = targetCreature.Level;
-        var damage = Math.Pow(2,(randomNumber * 2 - (creatureLevel - playerLevel))); // higher creature level means less dmg
-                                                                                              // higher player level means more dmg  
-
-          var pw = 
-              (creatureLevel - playerLevel)
-              switch
-              {
-                  > 20 => 20,  // creature is very much higher level
-                  > 0 => 1, // creature level > player level
-                  0 => 0, // same level
-                  _ => -1 // player level is higher.
-              };
-                                                                                              
-        return context;
+        var baseDamage = Math.Pow(2, (randomNumber * 2 - (creatureLevel - playerLevel)));
+        
+        // Apply level difference modifier
+        var levelDifference = creatureLevel - playerLevel;
+        var damageModifier = levelDifference switch
+        {
+            > 20 => 0.1,  // Very high level creature - minimal damage
+            > 0 => 0.5,   // Higher level creature - reduced damage  
+            0 => 1.0,     // Same level - full damage
+            _ => 1.5      // Lower level creature - bonus damage
+        };
+        
+        var finalDamage = (int)(baseDamage * damageModifier);
+        finalDamage = Math.Max(1, finalDamage); // Ensure at least 1 damage
+        
+        Console.WriteLine($"You deal {finalDamage} damage to the {targetCreature.Name}!");
+        
+        // Apply damage to creature (you'll need to add this to Creature class)
+        // For now, let's assume creatures die in one hit and remove them
+        context.Creatures.Remove(targetCreature);
+        context.Game.CurrentArea.Creatures.Remove(_creatureName);
+        
+        Console.WriteLine($"The {targetCreature.Name} has been defeated!");
+        
+        // Check if all creatures are defeated
+        if (!context.Creatures.Any())
+        {
+            return new WinFightContext(context.Player, [targetCreature], context.Game);
+        }
+        
+        // TODO: Add creature counter-attack logic here
+        // TODO: Check if player dies -> return LoseFightContext
+        
+        return context; // Continue fighting
     }
     
     private Creature? SelectTarget(FightContext context)
     {
         return context.Creatures.FirstOrDefault();
     }
-    
     
     private Context ExecuteOnGameContext(GameContext context)
     {
@@ -68,7 +85,6 @@ public class AttackCommand : ICommand
             
         if (context.CurrentArea.Creatures.TryGetValue(_creatureName, out var creature))
         {
-            // TODO: Implement actual combat mechanics
             Console.WriteLine($"You attack the {creature.Name}!");
             // transient Fight Context.  Once the fight is over, it goes poof!
             return new FightContext(context.Player, [creature], context);
@@ -77,7 +93,6 @@ public class AttackCommand : ICommand
         Console.WriteLine($"There is no '{_creatureName}' here to attack.");
         return context;
     }
-    
 
     public string GetHelpText() => "attack [creature] - Attack a creature";
 }
