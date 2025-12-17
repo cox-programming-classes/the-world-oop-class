@@ -1,17 +1,27 @@
 using System;
 using The_World.GameData.GameMechanics;
 using System.Linq;
+using The_World.GameData.Abilities;
 using The_World.GameData.Creatures;
+using The_World.GameData.Effects;
 
 namespace The_World.GameData.Commands;
 
 public class AttackCommand : ICommand
 {
     private readonly string _creatureName;
+    private readonly DamageEffect _effect;
+    
 
-    public AttackCommand(string creatureName = "")
+    public AttackCommand(DamageEffect effect, string creatureName = "")
     {
+        _effect = effect;
         _creatureName = creatureName?.Trim() ?? "";
+    }
+
+    public AttackCommand()
+    {
+        throw new NotImplementedException();
     }
 
     public Context Execute(Context c) => c switch
@@ -24,34 +34,31 @@ public class AttackCommand : ICommand
     private Context ExecuteOnFightContext(FightContext context)
     {
         // TODO:  Write attack for the Fight Context~
-        
+        // Note: There's no other attacks right now. Not really sure how to make this once we get more though
+        var attack = new BasicAttack();
         var targetCreature = SelectTarget(context);
         if (targetCreature == null)
         {
             Console.WriteLine("You missed!");
-            return context; 
+            return context;
         }
+
+        attack.Use(context, targetCreature);
+        
+        //TODO: figure out how to make this say how much damage the player dealt
+        Console.WriteLine($"You dealt [????] damage to the {_creatureName}!");
         
         // calculating the damage dealt-influenced by player level and creature level (int) 
-        var randomNumber = Dice.D6.Roll();
-        var playerLevel = context.Player.Level;
-        var creatureLevel = targetCreature.Level;
-        var damage = Math.Pow(2,(randomNumber * 2 - (creatureLevel - playerLevel))); // higher creature level means less dmg
-                                                                                              // higher player level means more dmg  
-
-          var pw = 
-              (creatureLevel - playerLevel)
-              switch
-              {
-                  > 20 => 20,  // creature is very much higher level
-                  > 0 => 1, // creature level > player level
-                  0 => 0, // same level
-                  _ => -1 // player level is higher.
-              };
-                                                                                              
-        return context;
+        //stole the damage code for me --Anne
+        
+        if (targetCreature.Stats.Health <= 0)
+        {
+            //TODO: Finish writing WinFightContext there's nothing there right now - Anne
+            return new WinFightContext();
+        }
+        return context.Game;
     }
-    
+
     private Creature? SelectTarget(FightContext context)
     {
         return context.Creatures.FirstOrDefault();

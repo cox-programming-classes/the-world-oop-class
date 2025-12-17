@@ -1,12 +1,11 @@
+/* GameData/Effects/ITargetableEffect.cs */
 using The_World.GameData.Creatures;
 using The_World.GameData.GameMechanics;
 
 namespace The_World.GameData.Effects;
-/// <summary>
-/// 
-/// </summary>
-public interface IEffect
+
+public interface ITargetableEffect
 {
-    string Apply(Context context); 
+    string ApplyToCreature(Creature target, Context context);
     string GetDescription();
 }
