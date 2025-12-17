@@ -1,5 +1,6 @@
 using The_World.GameData.Areas;
 using The_World.GameData.Creatures;
+using The_World.GameData.NPCs;
 using The_World.GameData.Items;
 using static The_World.GameData.Creatures.CreatureFactory;
 using static The_World.GameData.Items.ItemFactory;
@@ -27,8 +28,9 @@ public class WorldBuilder
             .WithCreature(
                 "boss_goblin",
                 BuildGoblinArchetype("Goblin Warrior", "A fierce goblin clad in makeshift armor, wielding a crude weapon.", 2))
-            .WithItem("health_potion", BuildHealthPotionArchetype())//testing my things you can remove this if you want - Anne
+            .WithItem("health_potion", BuildHealthPotionArchetype())
             .WithItem("rusty_sword", BuildRustySwordArchetype())
+            .WithNPC("merchant", NPCFactory.CreateBasicMerchant("Forest Trader", "A traveling merchant who braves the dangerous forest."))
             .Build();
 
         var caveArea = AreaBuilder
@@ -56,6 +58,5 @@ public class WorldBuilder
             .Build();
         
         return new GameContext(defaultPlayer, startingArea);
-        
     }
 }

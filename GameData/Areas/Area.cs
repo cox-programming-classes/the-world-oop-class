@@ -1,5 +1,6 @@
 using The_World.GameData.Creatures;
 using The_World.GameData.Items;
+using The_World.GameData.NPCs;
 
 namespace The_World.GameData.Areas;
 
@@ -8,8 +9,11 @@ public record Area(
     string Description,
     Dictionary<string, Item> Items,
     Dictionary<string, Creature> Creatures,
+    Dictionary<string, NPC> NPCs,
     Dictionary<string, Area> ConnectedAreas)
+
 {
+    
     /// <summary>
     /// Look around the Area.
     /// </summary>
@@ -20,17 +24,20 @@ public record Area(
                              """;
     
     public string LookAround() => $"""
-                                    You look around the {Name}.
+                                   You look around the {Name}.
 
-                                    Items here:
-                                    { (Items.Count == 0 ? "  None" : string.Join(Environment.NewLine, Items.Keys.Select(i => $"  {i}"))) }
+                                   Items here:
+                                   { (Items.Count == 0 ? "  None" : string.Join(Environment.NewLine, Items.Keys.Select(i => $"  {i}"))) }
 
-                                    Creatures here:
-                                    { (Creatures.Count == 0 ? "  None" : string.Join(Environment.NewLine, Creatures.Keys.Select(c => $"  {c}"))) }
+                                   Creatures here:
+                                   { (Creatures.Count == 0 ? "  None" : string.Join(Environment.NewLine, Creatures.Keys.Select(c => $"  {c}"))) }
 
-                                    Connected Areas:
-                                    { (ConnectedAreas.Count == 0 ? "  None" : string.Join(Environment.NewLine, ConnectedAreas.Keys.Select(a => $"  {a}"))) }
-                                    """;
+                                   NPCs here:
+                                   { (NPCs.Count == 0 ? "  None" : string.Join(Environment.NewLine, NPCs.Keys.Select(n => $"  {n}"))) }
+
+                                   Connected Areas:
+                                   { (ConnectedAreas.Count == 0 ? "  None" : string.Join(Environment.NewLine, ConnectedAreas.Keys.Select(a => $"  {a}"))) }
+                                   """;
 
     /// <summary>
     /// Look at a specific target in the Area.
@@ -44,9 +51,11 @@ public record Area(
             return item.Look();
         if (Creatures.TryGetValue(target, out var creature))
             return creature.Look();
+        if (NPCs.TryGetValue(target, out var npc))  // ADD THIS
+            return npc.Look();                      // ADD THIS
         if (ConnectedAreas.TryGetValue(target, out var area))
             return area.Look();
-        
+    
         return $"There is nothing notable about '{target}' here.";
     }
 }

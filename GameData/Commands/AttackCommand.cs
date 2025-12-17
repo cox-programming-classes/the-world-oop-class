@@ -84,6 +84,7 @@ public class AttackCommand : ICommand
         Console.WriteLine($"There is no '{_creatureName}' here to attack.");
         return context;
     }
+    
 
     public string GetHelpText() => "attack [creature] - Attack a creature";
 }
