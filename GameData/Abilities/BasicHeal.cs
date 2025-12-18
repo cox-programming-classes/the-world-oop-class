@@ -1,3 +1,4 @@
+using The_World.GameData.Creatures;
 using The_World.GameData.Effects;
 using The_World.GameData.GameMechanics;
 
@@ -8,6 +9,15 @@ public class BasicHeal : IAbilities
     public string Name => "Basic Heal";
     public string Description => "A simple healing spell, costs 10 mana to apply";
     public int ManaCost => 10; // Basic attacks don't cost mana
+    public bool CanUse(Context context, Creature? target = null)
+    {
+        throw new NotImplementedException();
+    }
+
+    public string Use(Context context, Creature? target = null)
+    {
+        throw new NotImplementedException();
+    }
 
     private readonly int _baseHealing;
 

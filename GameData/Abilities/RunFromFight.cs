@@ -1,10 +1,11 @@
+using The_World.GameData.Creatures;
 using The_World.GameData.Effects;
 using The_World.GameData.GameMechanics;
 
 namespace The_World.GameData.Abilities;
 
 public class RunFromFight : IAbilities
-{
+{   
     public string Name => "Run Away";
     public string Description => "Attempt to flee from combat and return to exploring";
     public int ManaCost => 0;
@@ -20,15 +21,12 @@ public class RunFromFight : IAbilities
             _ => successChance
         };
     }
-
-    public bool CanUse(Context context, string target = "")
+    public bool CanUse(Context context, Creature? target = null)
     {
-       
-        //assuming this is always FightContext-- deal with this in commands?
-        return true;
+        return context is FightContext;
     }
-
-    public string Use(Context context, string target = "")
+    
+    public string Use(Context context, Creature? target = null)
     {
         if (!CanUse(context, target))
         {
@@ -42,12 +40,13 @@ public class RunFromFight : IAbilities
         if (roll <= _successChance)
         {
             // Success! Create a FleeEffect that transitions states
-            return "DO THIS LATER";
+            var fleeEffect = new FleeEffect();
+            return fleeEffect.Apply(context);
         }
         else
         {
-            // Failed to escape
-            return "DO THIS LATER";
+            // Failed to escape - stay in combat
+            return $"You tried to run but couldn't escape! (Rolled {roll}, needed {_successChance} or lower)";
         }
     }
 }

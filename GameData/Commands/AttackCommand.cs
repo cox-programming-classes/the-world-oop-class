@@ -1,27 +1,17 @@
-using System;
+/* GameData/Commands/AttackCommand.cs */
 using The_World.GameData.GameMechanics;
-using System.Linq;
 using The_World.GameData.Abilities;
 using The_World.GameData.Creatures;
-using The_World.GameData.Effects;
 
 namespace The_World.GameData.Commands;
 
 public class AttackCommand : ICommand
 {
     private readonly string _creatureName;
-    private readonly DamageEffect _effect;
-    
 
-    public AttackCommand(DamageEffect effect, string creatureName = "")
+    public AttackCommand(string creatureName = "")
     {
-        _effect = effect;
         _creatureName = creatureName?.Trim() ?? "";
-    }
-
-    public AttackCommand()
-    {
-        throw new NotImplementedException();
     }
 
     public Context Execute(Context c) => c switch
@@ -33,37 +23,50 @@ public class AttackCommand : ICommand
 
     private Context ExecuteOnFightContext(FightContext context)
     {
-        // TODO:  Write attack for the Fight Context~
-        // Note: There's no other attacks right now. Not really sure how to make this once we get more though
+        // Strategy Pattern - using BasicAttack ability
         var attack = new BasicAttack();
         var targetCreature = SelectTarget(context);
+        
         if (targetCreature == null)
         {
-            Console.WriteLine("You missed!");
+            Console.WriteLine("You swing at empty air!");
             return context;
         }
 
-        attack.Use(context, targetCreature);
+        // Apply the attack using the Strategy Pattern
+        string attackResult = attack.Use(context, targetCreature);
+        Console.WriteLine(attackResult);
         
-        //TODO: figure out how to make this say how much damage the player dealt
-        Console.WriteLine($"You dealt [????] damage to the {_creatureName}!");
-        
-        // calculating the damage dealt-influenced by player level and creature level (int) 
-        //stole the damage code for me --Anne
-        
+        // Check if target was defeated
         if (targetCreature.Stats.Health <= 0)
         {
-            //TODO: Finish writing WinFightContext there's nothing there right now - Anne
-            return new WinFightContext();
+            Console.WriteLine($"{targetCreature.Name} is defeated!");
+            context.Player.AddExperience(targetCreature.XP);
+            context.Creatures.Remove(targetCreature);
+            
+            if (context.Creatures.Count == 0)
+            {
+                Console.WriteLine("Victory! All enemies defeated!");
+                // Return to game context instead of incomplete WinFightContext
+                return context.Game;
+            }
         }
-        return context.Game;
+        
+        return context;
     }
 
     private Creature? SelectTarget(FightContext context)
     {
-        return context.Creatures.FirstOrDefault();
+        if (string.IsNullOrWhiteSpace(_creatureName))
+        {
+            // If no specific target, attack first available creature
+            return context.Creatures.FirstOrDefault();
+        }
+        
+        // Find creature by name (case-insensitive partial match)
+        return context.Creatures.FirstOrDefault(c => 
+            c.Name.Contains(_creatureName, StringComparison.OrdinalIgnoreCase));
     }
-    
     
     private Context ExecuteOnGameContext(GameContext context)
     {
@@ -75,16 +78,14 @@ public class AttackCommand : ICommand
             
         if (context.CurrentArea.Creatures.TryGetValue(_creatureName, out var creature))
         {
-            // TODO: Implement actual combat mechanics
             Console.WriteLine($"You attack the {creature.Name}!");
-            // transient Fight Context.  Once the fight is over, it goes poof!
+            // State Machine Pattern - transitioning to Fight Context
             return new FightContext(context.Player, [creature], context);
         }
 
         Console.WriteLine($"There is no '{_creatureName}' here to attack.");
         return context;
     }
-    
 
     public string GetHelpText() => "attack [creature] - Attack a creature";
 }
