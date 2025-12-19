@@ -15,6 +15,8 @@ public class CommandParser : IParser
             ["attack"] = arg => new AttackCommand(),     
             ["use"] = arg => new UseCommand(arg),          
             ["help"] = _ => new HelpCommand(this),
+            ["money"] = _ => new MoneyCommand(),
+            ["buy"] = arg => new BuyCommand(arg), 
             ["quit"] = _ => new QuitCommand()
         };
     }
