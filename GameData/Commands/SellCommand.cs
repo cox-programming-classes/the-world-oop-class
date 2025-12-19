@@ -1,5 +1,5 @@
 using The_World.GameData.GameMechanics;
-using The_World.GameData.NPCs;
+using The_World.GameData.Items;
 using System.Linq;
 
 namespace The_World.GameData.Commands;
@@ -15,9 +15,9 @@ public class SellCommand : ICommand
 
     public Context Execute(Context c)
     {
-        if (c is not GameContext context)
+        if (c is not MerchantContext context)
         {
-            Console.WriteLine("You can't sell anything right now.");
+            Console.WriteLine("You can only sell items when talking to a merchant.");
             return c;
         }
 
@@ -39,16 +39,8 @@ public class SellCommand : ICommand
             return context;
         }
 
-        // Find a merchant
-        var merchant = context.CurrentArea.NPCs.Values
-            .OfType<Merchant>()
-            .FirstOrDefault();
-
-        if (merchant == null)
-        {
-            Console.WriteLine("There's no merchant here to sell to.");
-            return context;
-        }
+        // Use the merchant from the context
+        var merchant = context.Merchant;
 
         // Calculate sell price (Strategy Pattern - different pricing strategies)
         int sellPrice = CalculateSellPrice(item, merchant);
@@ -60,11 +52,11 @@ public class SellCommand : ICommand
         Console.WriteLine($"You sold {item.Name} for {sellPrice} gold.");
         Console.WriteLine($"You now have {context.Player.Money}.");
 
-        return context;
+        return context; // Stay in MerchantContext
     }
 
     // Strategy Pattern - different ways to calculate sell prices
-    private int CalculateSellPrice(Item item, Merchant merchant)
+    private int CalculateSellPrice(Item item, NPCs.Merchant merchant)
     {
         // If merchant normally sells this item, give 50% of retail price
         if (merchant.ItemPrices.TryGetValue(item.Name.ToLower().Replace(" ", "_"), out int retailPrice))
@@ -82,7 +74,7 @@ public class SellCommand : ICommand
         };
     }
 
-    private void ShowInventory(GameContext context)
+    private void ShowInventory(MerchantContext context)
     {
         if (context.Player.Inventory.Count == 0)
         {
@@ -98,5 +90,5 @@ public class SellCommand : ICommand
         }
     }
 
-    public string GetHelpText() => "sell [item] - Sell an item to a merchant";
+    public string GetHelpText() => "sell [item] - Sell an item to the merchant";
 }

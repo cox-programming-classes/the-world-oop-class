@@ -1,28 +1,24 @@
-using The_World.GameData.Effects;
+using The_World.GameData.GameMechanics;
 
 namespace The_World.GameData.Commands;
 
-public class CommandParser : IParser
+public class MerchantCommandParser : IParser
 {
     private readonly Dictionary<string, Func<string, ICommand>> _commandFactories;
 
-    public CommandParser()
+    public MerchantCommandParser()
     {
         _commandFactories = new Dictionary<string, Func<string, ICommand>>
         {
-            ["look"] = arg => new LookCommand(arg),
-            ["go"] = arg => new GoCommand(arg),
-            ["get"] = arg => new GetCommand(arg),
+            ["buy"] = arg => new BuyCommand(arg),
+            ["sell"] = arg => new SellCommand(arg),
+            ["list"] = _ => new ListMerchantItemsCommand(),
             ["inventory"] = _ => new InventoryCommand(),
-            ["attack"] = arg => new AttackCommand(arg),     
-            ["use"] = arg => new UseCommand(arg),          
-            ["help"] = _ => new HelpCommand(this),
-            ["talk"] = arg => new TalkCommand(arg),
-            ["money"] = _ => new MoneyCommand(),
-            ["quit"] = _ => new QuitCommand()
+            ["exit"] = _ => new ExitMerchantCommand(),
+            ["leave"] = _ => new ExitMerchantCommand(),
+            ["look"] = arg => new LookMerchantCommand(arg)
         };
     }
-
 
     public ICommand Parse(string input)
     {
