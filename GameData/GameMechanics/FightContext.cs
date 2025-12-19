@@ -6,8 +6,8 @@ namespace The_World.GameData.GameMechanics;
 public class FightContext : Context
 {
     public GameContext Game { get; private set; }
-    
     public List<Creature> Creatures { get; private set; }
+    public List<Creature> DefeatedCreatures { get; private set; } = new List<Creature>();
 
     public FightContext(Player player, List<Creature> creatures, GameContext game)
     {

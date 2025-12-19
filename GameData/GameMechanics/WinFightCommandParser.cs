@@ -1,28 +1,25 @@
-using The_World.GameData.Effects;
+using The_World.GameData.Commands;
 
 namespace The_World.GameData.Commands;
 
-public class CommandParser : IParser
+public class WinFightCommandParser : IParser
 {
     private readonly Dictionary<string, Func<string, ICommand>> _commandFactories;
 
-    public CommandParser()
+    public WinFightCommandParser()
     {
         _commandFactories = new Dictionary<string, Func<string, ICommand>>
         {
+            ["continue"] = _ => new ContinueCommand(),
+            ["c"] = _ => new ContinueCommand(),
             ["look"] = arg => new LookCommand(arg),
-            ["go"] = arg => new GoCommand(arg),
-            ["get"] = arg => new GetCommand(arg),
+            ["l"] = arg => new LookCommand(arg),
             ["inventory"] = _ => new InventoryCommand(),
-            ["attack"] = arg => new AttackCommand(arg),     
-            ["use"] = arg => new UseCommand(arg),          
-            ["help"] = _ => new HelpCommand(this),
-            ["money"] = _ => new MoneyCommand(),
-            ["buy"] = arg => new BuyCommand(arg), 
-            ["quit"] = _ => new QuitCommand()
+            ["i"] = _ => new InventoryCommand(),
+            ["help"] = _ => new HelpCommand(new CommandParser()), // Fixed: HelpCommand needs a parser
+            ["h"] = _ => new HelpCommand(new CommandParser())
         };
     }
-
 
     public ICommand Parse(string input)
     {
@@ -40,6 +37,6 @@ public class CommandParser : IParser
 
     public List<string> GetAvailableCommands()
     {
-        return _commandFactories.Keys.ToList();
+        return new List<string> { "continue", "look", "inventory", "help" };
     }
 }

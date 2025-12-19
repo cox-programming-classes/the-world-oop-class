@@ -26,33 +26,57 @@ public class AttackCommand : ICommand
         // Strategy Pattern - using BasicAttack ability
         var attack = new BasicAttack();
         var targetCreature = SelectTarget(context);
-        
+
         if (targetCreature == null)
         {
-            Console.WriteLine("You swing at empty air!");
-            return context;
+            Console.WriteLine("There are no enemies left to fight!");
+            return new WinFightContext(context.Player, [], context.Game);
+
         }
 
-        // Apply the attack using the Strategy Pattern
-        string attackResult = attack.Use(context, targetCreature);
-        Console.WriteLine(attackResult);
-        
-        // Check if target was defeated
-        if (targetCreature.Stats.Health <= 0)
+        attack.Use(context, targetCreature);
+
+        //TODO: figure out how to make this say how much damage the player dealt
+        Console.WriteLine($"You dealt [????] damage to the {_creatureName}!");
+
+        // Your existing damage calculation
+        var randomNumber = Dice.D6.Roll();
+        var playerLevel = context.Player.Level;
+        var creatureLevel = targetCreature.Level;
+        var baseDamage = Math.Pow(2, (randomNumber * 2 - (creatureLevel - playerLevel)));
+
+        // Apply level difference modifier
+        var levelDifference = creatureLevel - playerLevel;
+        var damageModifier = levelDifference switch
         {
-            Console.WriteLine($"{targetCreature.Name} is defeated!");
-            context.Player.AddExperience(targetCreature.XP);
-            context.Creatures.Remove(targetCreature);
-            
-            if (context.Creatures.Count == 0)
-            {
-                Console.WriteLine("Victory! All enemies defeated!");
-                // Return to game context instead of incomplete WinFightContext
-                return context.Game;
-            }
+            > 20 => 0.1, // Very high level creature - minimal damage
+            > 0 => 0.5, // Higher level creature - reduced damage  
+            0 => 1.0, // Same level - full damage
+            _ => 1.5 // Lower level creature - bonus damage
+        };
+
+        var finalDamage = (int)(baseDamage * damageModifier);
+        finalDamage = Math.Max(1, finalDamage); // Ensure at least 1 damage
+
+        Console.WriteLine($"You deal {finalDamage} damage to the {targetCreature.Name}!");
+
+        // Apply damage to creature (you'll need to add this to Creature class)
+        // For now, let's assume creatures die in one hit and remove them
+        context.Creatures.Remove(targetCreature);
+        context.Game.CurrentArea.Creatures.Remove(_creatureName);
+
+        Console.WriteLine($"The {targetCreature.Name} has been defeated!");
+
+        // Check if all creatures are defeated
+        if (!context.Creatures.Any())
+        {
+            return new WinFightContext(context.Player, [targetCreature], context.Game);
         }
-        
-        return context;
+
+        // TODO: Add creature counter-attack logic here
+        // TODO: Check if player dies -> return LoseFightContext
+
+        return context; // Continue fighting
     }
 
     private Creature? SelectTarget(FightContext context)
