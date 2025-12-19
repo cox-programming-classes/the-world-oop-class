@@ -4,7 +4,7 @@ namespace The_World.GameData.Effects;
 
 public class NoEffect : IEffect
 {
-    public string Apply(GameContext context)
+    public string Apply(Context context)
     {
         return "Nothing happens. This item seems to have no effect.";
     }

@@ -11,7 +11,7 @@ public class HealingEffect(int healAmount) : IEffect
         _ => healAmount
     };
 
-    public string Apply(GameContext context)
+    public string Apply(Context context)
     {
         var oldHealth = context.Player.Stats.Health;
         context.Player.Stats.RestoreHealth(healAmount);
@@ -22,5 +22,5 @@ public class HealingEffect(int healAmount) : IEffect
             ? $"You feel healthier! Restored {actualHealing} health points."
             : "You're already at full health!";
     }
-    public string GetDescription() => $"Restores {_healAmount} health points";
+    public string GetDescription() => $"Restores up to {_healAmount} health points";
 }

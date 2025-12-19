@@ -173,7 +173,7 @@ public class FightCommand : ICommand
             if (updatedCreature.Stats.Health <= 0)
             {
                 Console.WriteLine($"{updatedCreature.Name} is defeated!");
-    
+                // TODO:  Move this to the WinContext
                 // Give XP and currency rewards
                 context.Player.AddExperience(updatedCreature.XP);
                 var goldReward = updatedCreature.Level * 5; // 5 gold per creature level
@@ -182,8 +182,16 @@ public class FightCommand : ICommand
                 Console.WriteLine($"You gained {updatedCreature.XP} XP and {goldReward} gold!");
                 Console.WriteLine($"You now have {context.Player.Money}.");
     
+                
+                // Add to defeated creatures list BEFORE removing from active creatures
+                context.DefeatedCreatures.Add(updatedCreature);
                 context.Creatures.RemoveAt(targetIndex);
-                // ... rest of existing code stays the same
+                
+                if (context.Creatures.Count == 0)
+                {
+                    // CREATE WinFightContext with ALL defeated creatures
+                    return new WinFightContext(context.Player, context.DefeatedCreatures, context.Game);
+                }
             }
         }
         else
@@ -191,29 +199,54 @@ public class FightCommand : ICommand
             Console.WriteLine("Miss! Your attack fails to connect.");
         }
 
-        // Show available commands after attack
+        // Process enemy turns after player attack
+        context = ProcessEnemyTurns(context);
+
+        // Check if player is still alive and combat continues
+        if (context.Player.Stats.Health <= 0)
+        {
+            // TODO: Create LoseFightContext here
+            Console.WriteLine("💀 You have been defeated! 💀");
+            context.KeepPlaying = false;
+            return context;
+        }
+        
+        if (context.Creatures.Count == 0)
+        {
+            // All enemies defeated (shouldn't reach here, but safety check)
+            return new WinFightContext(context.Player, context.DefeatedCreatures, context.Game);
+        }
+
         Console.WriteLine("\nWhat do you want to do next?");
         ShowAvailableCommands();
 
         return context;
     }
 
-    // Helper method to show available commands (you can reuse this in other methods too)
-    private void ShowAvailableCommands()
-    {
-        Console.WriteLine("Available commands:");
-        Console.WriteLine("  (a)ttack [target] - Attack a creature");
-        Console.WriteLine("  (d)efend - Raise your guard");
-        Console.WriteLine("  (u)se [item] - Use an item from inventory");
-        Console.WriteLine("  (r)un - Attempt to flee from combat");
-        Console.WriteLine("  (l)ook [target] - Look around or at specific target");
-        Console.WriteLine("  (h)elp - Show help message");
-    }
-
     private Context ExecuteDefend(FightContext context)
     {
         Console.WriteLine("You raise your guard, preparing to defend against incoming attacks.");
         // TODO: Implement defend logic - could reduce damage taken next turn
+        
+        // Process enemy turns after defend
+        context = ProcessEnemyTurns(context);
+
+        // Check if player is still alive and combat continues
+        if (context.Player.Stats.Health <= 0)
+        {
+            Console.WriteLine("💀 You have been defeated! 💀");
+            context.KeepPlaying = false;
+            return context;
+        }
+        
+        if (context.Creatures.Count == 0)
+        {
+            return new WinFightContext(context.Player, context.DefeatedCreatures, context.Game);
+        }
+
+        Console.WriteLine("\nWhat do you want to do next?");
+        ShowAvailableCommands();
+        
         return context;
     }
 
@@ -244,10 +277,28 @@ public class FightCommand : ICommand
             context.Player.Inventory.Remove(selectedItem);
             Console.WriteLine($"You use the {selectedItem.Name} during combat!");
             
-            // Apply effect - need to create GameContext temporarily for effect application
-            var tempGameContext = new GameContext(context.Player, context.Game.CurrentArea);
-            string result = consumable.Effect.Apply(tempGameContext);
+            // Apply effect
+            string result = consumable.Effect.Apply(context.Game);
             Console.WriteLine(result);
+
+            // Process enemy turns after using item
+            context = ProcessEnemyTurns(context);
+
+            // Check if player is still alive and combat continues
+            if (context.Player.Stats.Health <= 0)
+            {
+                Console.WriteLine("💀 You have been defeated! 💀");
+                context.KeepPlaying = false;
+                return context;
+            }
+            
+            if (context.Creatures.Count == 0)
+            {
+                return new WinFightContext(context.Player, context.DefeatedCreatures, context.Game);
+            }
+
+            Console.WriteLine("\nWhat do you want to do next?");
+            ShowAvailableCommands();
         }
         else
         {
@@ -271,6 +322,26 @@ public class FightCommand : ICommand
         else
         {
             Console.WriteLine("You couldn't escape! The enemies block your path.");
+            
+            // Process enemy turns after failed escape
+            context = ProcessEnemyTurns(context);
+
+            // Check if player is still alive and combat continues
+            if (context.Player.Stats.Health <= 0)
+            {
+                Console.WriteLine("💀 You have been defeated! 💀");
+                context.KeepPlaying = false;
+                return context;
+            }
+            
+            if (context.Creatures.Count == 0)
+            {
+                return new WinFightContext(context.Player, context.DefeatedCreatures, context.Game);
+            }
+
+            Console.WriteLine("\nWhat do you want to do next?");
+            ShowAvailableCommands();
+            
             return context;
         }
     }
@@ -324,6 +395,63 @@ public class FightCommand : ICommand
     {
         Console.WriteLine($"Unknown combat command: '{commandName}'. Type 'help' for available commands.");
         return context;
+    }
+
+    // Process enemy turns after player actions
+    private FightContext ProcessEnemyTurns(FightContext context)
+    {
+        if (context.Creatures.Count == 0) return context; // No enemies left
+        
+        Console.WriteLine("\n--- Enemy Turn ---");
+        
+        for (int i = context.Creatures.Count - 1; i >= 0; i--) // Reverse iteration for safe removal
+        {
+            var creature = context.Creatures[i];
+            
+            // Simple AI: creature attacks player
+            var attackRoll = new Dice(1, 20).Roll();
+            var damage = new Dice(1, 4, creature.Level).Roll(); // Scale damage with creature level
+            
+            Console.WriteLine($"{creature.Name} attacks you! (Roll: {attackRoll})");
+            
+            if (attackRoll >= 8) // Enemies have slightly easier hit chance
+            {
+                var oldHealth = context.Player.Stats.Health;
+                var newHealth = Math.Max(0, oldHealth - damage);
+                context.Player.Stats.Health = newHealth;
+                
+                Console.WriteLine($"Hit! {creature.Name} deals {damage} damage to you!");
+                Console.WriteLine($"Your health: {context.Player.Stats.Health}");
+                
+                if (context.Player.Stats.Health <= 0)
+                {
+                    Console.WriteLine("💀 You have been defeated! 💀");
+                    context.KeepPlaying = false;
+                    return context;
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Miss! {creature.Name}'s attack fails to connect.");
+            }
+        }
+        
+        Console.WriteLine("\n--- Your Turn ---");
+        return context;
+    }
+
+    // Helper method to show available commands
+    // Helper method to show available commands
+    // Helper method to show available commands
+    private void ShowAvailableCommands()
+    {
+        Console.WriteLine("Available commands:");
+        Console.WriteLine("  (a)ttack [target] - Attack a creature");
+        Console.WriteLine("  (d)efend - Raise your guard");
+        Console.WriteLine("  (u)se [item] - Use an item from inventory");
+        Console.WriteLine("  (r)un - Attempt to flee from combat");
+        Console.WriteLine("  (l)ook [target] - Look around or at specific target");
+        Console.WriteLine("  (h)elp - Show help message");
     }
 
     public string GetHelpText() => "Fight commands - use during combat";
