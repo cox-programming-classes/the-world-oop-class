@@ -173,7 +173,7 @@ public class FightCommand : ICommand
             if (updatedCreature.Stats.Health <= 0)
             {
                 Console.WriteLine($"{updatedCreature.Name} is defeated!");
-    
+                // TODO:  Move this to the WinContext
                 // Give XP and currency rewards
                 context.Player.AddExperience(updatedCreature.XP);
                 var goldReward = updatedCreature.Level * 5; // 5 gold per creature level
@@ -184,6 +184,16 @@ public class FightCommand : ICommand
     
                 context.Creatures.RemoveAt(targetIndex);
                 // ... rest of existing code stays the same
+                
+                // Add to defeated creatures list BEFORE removing from active creatures
+                context.DefeatedCreatures.Add(updatedCreature);
+                context.Creatures.RemoveAt(targetIndex);
+                
+                if (context.Creatures.Count == 0)
+                {
+                    // CREATE WinFightContext with ALL defeated creatures
+                    return new WinFightContext(context.Player, context.DefeatedCreatures, context.Game);
+                }
             }
         }
         else
@@ -195,9 +205,18 @@ public class FightCommand : ICommand
         context = ProcessEnemyTurns(context);
 
         // Check if player is still alive and combat continues
-        if (context.Player.Stats.Health <= 0 || context.Creatures.Count == 0)
+        if (context.Player.Stats.Health <= 0)
         {
+            // TODO: Create LoseFightContext here
+            Console.WriteLine("💀 You have been defeated! 💀");
+            context.KeepPlaying = false;
             return context;
+        }
+        
+        if (context.Creatures.Count == 0)
+        {
+            // All enemies defeated (shouldn't reach here, but safety check)
+            return new WinFightContext(context.Player, context.DefeatedCreatures, context.Game);
         }
 
         Console.WriteLine("\nWhat do you want to do next?");
@@ -215,9 +234,16 @@ public class FightCommand : ICommand
         context = ProcessEnemyTurns(context);
 
         // Check if player is still alive and combat continues
-        if (context.Player.Stats.Health <= 0 || context.Creatures.Count == 0)
+        if (context.Player.Stats.Health <= 0)
         {
+            Console.WriteLine("💀 You have been defeated! 💀");
+            context.KeepPlaying = false;
             return context;
+        }
+        
+        if (context.Creatures.Count == 0)
+        {
+            return new WinFightContext(context.Player, context.DefeatedCreatures, context.Game);
         }
 
         Console.WriteLine("\nWhat do you want to do next?");
@@ -253,8 +279,7 @@ public class FightCommand : ICommand
             context.Player.Inventory.Remove(selectedItem);
             Console.WriteLine($"You use the {selectedItem.Name} during combat!");
             
-            // Apply effect - need to create GameContext temporarily for effect application
-            //var tempGameContext = new GameContext(context.Player, context.Game.CurrentArea);
+            // Apply effect
             string result = consumable.Effect.Apply(context.Game);
             Console.WriteLine(result);
 
@@ -262,9 +287,16 @@ public class FightCommand : ICommand
             context = ProcessEnemyTurns(context);
 
             // Check if player is still alive and combat continues
-            if (context.Player.Stats.Health <= 0 || context.Creatures.Count == 0)
+            if (context.Player.Stats.Health <= 0)
             {
+                Console.WriteLine("💀 You have been defeated! 💀");
+                context.KeepPlaying = false;
                 return context;
+            }
+            
+            if (context.Creatures.Count == 0)
+            {
+                return new WinFightContext(context.Player, context.DefeatedCreatures, context.Game);
             }
 
             Console.WriteLine("\nWhat do you want to do next?");
@@ -297,9 +329,16 @@ public class FightCommand : ICommand
             context = ProcessEnemyTurns(context);
 
             // Check if player is still alive and combat continues
-            if (context.Player.Stats.Health <= 0 || context.Creatures.Count == 0)
+            if (context.Player.Stats.Health <= 0)
             {
+                Console.WriteLine("💀 You have been defeated! 💀");
+                context.KeepPlaying = false;
                 return context;
+            }
+            
+            if (context.Creatures.Count == 0)
+            {
+                return new WinFightContext(context.Player, context.DefeatedCreatures, context.Game);
             }
 
             Console.WriteLine("\nWhat do you want to do next?");
@@ -360,7 +399,7 @@ public class FightCommand : ICommand
         return context;
     }
 
-    // NEW METHOD: Process enemy turns after player actions
+    // Process enemy turns after player actions
     private FightContext ProcessEnemyTurns(FightContext context)
     {
         if (context.Creatures.Count == 0) return context; // No enemies left
@@ -389,7 +428,6 @@ public class FightCommand : ICommand
                 if (context.Player.Stats.Health <= 0)
                 {
                     Console.WriteLine("💀 You have been defeated! 💀");
-                    // TODO: Handle player death - could return to LoseFightContext
                     context.KeepPlaying = false;
                     return context;
                 }
@@ -404,7 +442,9 @@ public class FightCommand : ICommand
         return context;
     }
 
-    // Helper method to show available commands (you can reuse this in other methods too)
+    // Helper method to show available commands
+    // Helper method to show available commands
+    // Helper method to show available commands
     private void ShowAvailableCommands()
     {
         Console.WriteLine("Available commands:");
