@@ -5,6 +5,7 @@ using The_World.GameData.GameMechanics;
 using The_World.GameData.Items;
 using The_World.GameData.Creatures;
 using The_World.GameData;
+using The_World.GameData.Abilities;
 
 namespace The_World.GameData.Commands;
 
@@ -13,8 +14,8 @@ public abstract record FightCommandType
 {
     public record Attack(string Target = "") : FightCommandType;
     public record Defend : FightCommandType;
+    public record UseAbility(string AbilityName = "", string Target = "") : FightCommandType; 
     public record UseItem(string ItemName = "") : FightCommandType;
-    public record Run : FightCommandType;
     public record Look(string Target = "") : FightCommandType;
     public record Help : FightCommandType;
     public record Unknown(string CommandName) : FightCommandType;
@@ -33,11 +34,11 @@ public class FightCommandParser : IParser
             ["a"] = arg => new FightCommandType.Attack(arg),
             ["defend"] = _ => new FightCommandType.Defend(),
             ["d"] = _ => new FightCommandType.Defend(),
-            ["use"] = arg => new FightCommandType.UseItem(arg),
-            ["u"] = arg => new FightCommandType.UseItem(arg),
-            ["run"] = _ => new FightCommandType.Run(),
-            ["r"] = _ => new FightCommandType.Run(),
-            ["flee"] = _ => new FightCommandType.Run(),
+            ["use item"] = arg => new FightCommandType.UseItem(arg),
+            ["i"] = arg => new FightCommandType.UseItem(arg),
+            ["use ability"] = arg => new FightCommandType.UseAbility(arg),
+            ["ability"] = arg => new FightCommandType.UseAbility(arg),
+            ["ab"] = arg => new FightCommandType.UseAbility(arg),
             ["look"] = arg => new FightCommandType.Look(arg),
             ["l"] = arg => new FightCommandType.Look(arg),
             ["help"] = _ => new FightCommandType.Help(),
@@ -101,7 +102,7 @@ public class FightCommand : ICommand
             FightCommandType.Attack attack => ExecuteAttack(fightContext, attack.Target),
             FightCommandType.Defend => ExecuteDefend(fightContext),
             FightCommandType.UseItem useItem => ExecuteUseItem(fightContext, useItem.ItemName),
-            FightCommandType.Run => ExecuteRun(fightContext),
+            FightCommandType.UseAbility useAbility => ExecuteUseAbility(fightContext, useAbility.AbilityName, useAbility.Target),
             FightCommandType.Look look => ExecuteLook(fightContext, look.Target),
             FightCommandType.Help => ExecuteHelp(fightContext),
             FightCommandType.Unknown unknown => ExecuteUnknown(fightContext, unknown.CommandName),
@@ -275,36 +276,12 @@ public class FightCommand : ICommand
         return context;
     }
 
-    private Context ExecuteRun(FightContext context)
+    private Context ExecuteUseAbility(FightContext context, string abilityName, string target)
     {
-        Console.WriteLine("You attempt to flee from combat!");
-        
-        // Simple escape chance - could be based on player stats vs enemy stats
-        var escapeRoll = new Dice(1, 20).Roll();
-        if (escapeRoll >= 10)
-        {
-            Console.WriteLine("You successfully escape!");
-            return context.Game; // Return to game context
-        }
-        else
-        {
-            Console.WriteLine("You couldn't escape! The enemies block your path.");
-            
-            // Process enemy turns after failed escape
-            context = ProcessEnemyTurns(context);
-
-            // Check if player is still alive and combat continues
-            if (context.Player.Stats.Health <= 0 || context.Creatures.Count == 0)
-            {
-                return context;
-            }
-
-            Console.WriteLine("\nWhat do you want to do next?");
-            ShowAvailableCommands();
-            
-            return context;
-        }
+        var useAbilityCommand = new UseAbilityCommand(abilityName, target);
+        return useAbilityCommand.Execute(context);
     }
+
 
     private Context ExecuteLook(FightContext context, string target)
     {

@@ -17,6 +17,7 @@ public class UseAbilityCommand : ICommand
 
     public Context Execute(Context context)
     {
+        
         if (string.IsNullOrWhiteSpace(_abilityName))
         {
             Console.WriteLine("Use which ability? Try 'use [ability name]'");
