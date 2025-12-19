@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using The_World.GameData.GameMechanics;
 using The_World.GameData.Items;
 using The_World.GameData.Creatures;
-using The_World.GameData;
-using The_World.GameData.Abilities;
 
 namespace The_World.GameData.Commands;
 
@@ -418,8 +413,8 @@ public class FightCommand : ICommand
         Console.WriteLine("Available commands:");
         Console.WriteLine("  (a)ttack [target] - Attack a creature");
         Console.WriteLine("  (d)efend - Raise your guard");
-        Console.WriteLine("  (u)se [item] - Use an item from inventory");
-        Console.WriteLine("  (r)un - Attempt to flee from combat");
+        Console.WriteLine("  (u)se item [item] - Use an item from inventory");
+        Console.WriteLine("  use (ab)ility [ability] - Use one of the player's abilities [attack, heal, run]");
         Console.WriteLine("  (l)ook [target] - Look around or at specific target");
         Console.WriteLine("  (h)elp - Show help message");
     }
