@@ -182,8 +182,6 @@ public class FightCommand : ICommand
                 Console.WriteLine($"You gained {updatedCreature.XP} XP and {goldReward} gold!");
                 Console.WriteLine($"You now have {context.Player.Money}.");
     
-                context.Creatures.RemoveAt(targetIndex);
-                // ... rest of existing code stays the same
                 
                 // Add to defeated creatures list BEFORE removing from active creatures
                 context.DefeatedCreatures.Add(updatedCreature);
