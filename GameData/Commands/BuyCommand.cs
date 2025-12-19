@@ -1,9 +1,6 @@
 using The_World.GameData.GameMechanics;
-using The_World.GameData.NPCs;  
-using System.Linq;              
 
 namespace The_World.GameData.Commands;
-
 
 public class BuyCommand : ICommand
 {
@@ -16,9 +13,9 @@ public class BuyCommand : ICommand
 
     public Context Execute(Context c)
     {
-        if (c is not GameContext context)
+        if (c is not MerchantContext context)
         {
-            Console.WriteLine("You can't buy anything right now.");
+            Console.WriteLine("You can only buy items when talking to a merchant.");
             return c;
         }
 
@@ -29,16 +26,8 @@ public class BuyCommand : ICommand
             return context;
         }
 
-        // Find a merchant in the current area
-        var merchant = context.CurrentArea.NPCs.Values
-            .OfType<Merchant>()
-            .FirstOrDefault();
-
-        if (merchant == null)
-        {
-            Console.WriteLine("There's no merchant here to buy from.");
-            return context;
-        }
+        // Use the merchant from the context (no need to search for one)
+        var merchant = context.Merchant;
 
         // Check if merchant has the item and get price
         if (!merchant.ItemPrices.TryGetValue(_itemName, out int price))
@@ -56,7 +45,7 @@ public class BuyCommand : ICommand
         }
 
         // Try to create the item from the game's item library
-        var item = context.SpawnItem(_itemName);
+        var item = context.Game.SpawnItem(_itemName);
         if (item == null)
         {
             Console.WriteLine($"Sorry, {_itemName} is out of stock.");
@@ -70,21 +59,17 @@ public class BuyCommand : ICommand
         Console.WriteLine($"You bought {item.Name} for {price} gold.");
         Console.WriteLine($"You now have {context.Player.Money}.");
 
-        return context;
+        return context; // Stay in MerchantContext
     }
 
-    private void ShowAvailableItems(GameContext context)
+    private void ShowAvailableItems(MerchantContext context)
     {
-        var merchant = context.CurrentArea.NPCs.Values.OfType<Merchant>().FirstOrDefault();
-        if (merchant != null)
+        Console.WriteLine("Available items:");
+        foreach (var (itemName, price) in context.Merchant.ItemPrices)
         {
-            Console.WriteLine("Available items:");
-            foreach (var (itemName, price) in merchant.ItemPrices)
-            {
-                Console.WriteLine($"  {itemName} - {price} gold");
-            }
+            Console.WriteLine($"  {itemName} - {price} gold");
         }
     }
 
-    public string GetHelpText() => "buy [item] - Purchase an item from a merchant";
+    public string GetHelpText() => "buy [item] - Purchase an item from the merchant";
 }
