@@ -1,4 +1,5 @@
 using The_World.GameData.GameMechanics;
+using The_World.GameData.NPCs;
 
 namespace The_World.GameData.Commands;
 
@@ -28,6 +29,11 @@ public class TalkCommand : ICommand
         if (context.CurrentArea.NPCs.TryGetValue(_npcName, out var npc))
         {
             Console.WriteLine(npc.Interact());
+            
+            if (npc is Merchant merchant)
+            {
+                return new MerchantContext(context.Player, merchant, context);
+            }
         }
         else
         {
