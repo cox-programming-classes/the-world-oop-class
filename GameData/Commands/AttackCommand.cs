@@ -75,7 +75,7 @@ public class AttackCommand : ICommand
 
         // TODO: Add creature counter-attack logic here
         // TODO: Check if player dies -> return LoseFightContext
-
+        
         return context; // Continue fighting
     }
 
