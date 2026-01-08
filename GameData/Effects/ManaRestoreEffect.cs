@@ -14,7 +14,7 @@ public class ManaRestoreEffect(int manaAmount) : IEffect
     public string Apply(Context context)
     {
         var oldMana = context.Player.Stats.Mana;
-        context.Player.Stats.RestoreHealth(manaAmount);
+        context.Player.Stats.RestoreMana(manaAmount);
         var newMana = context.Player.Stats.Mana;
         var actualMana = newMana - oldMana;
 
