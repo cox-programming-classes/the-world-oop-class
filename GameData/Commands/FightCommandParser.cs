@@ -29,9 +29,8 @@ public class FightCommandParser : IParser
             ["a"] = arg => new FightCommandType.Attack(arg),
             ["defend"] = _ => new FightCommandType.Defend(),
             ["d"] = _ => new FightCommandType.Defend(),
-            ["use item"] = arg => new FightCommandType.UseItem(arg),
+            ["item"] = arg => new FightCommandType.UseItem(arg),
             ["i"] = arg => new FightCommandType.UseItem(arg),
-            ["use ability"] = arg => new FightCommandType.UseAbility(arg),
             ["ability"] = arg => new FightCommandType.UseAbility(arg),
             ["ab"] = arg => new FightCommandType.UseAbility(arg),
             ["look"] = arg => new FightCommandType.Look(arg),
@@ -345,14 +344,7 @@ public class FightCommand : ICommand
 
     private Context ExecuteHelp(FightContext context)
     {
-        Console.WriteLine("Available combat commands:");
-        Console.WriteLine("  attack [target] - Attack a creature");
-        Console.WriteLine("  defend - Raise your guard");
-        Console.WriteLine("  use [item] - Use an item from inventory");
-        Console.WriteLine("  run - Attempt to flee from combat");
-        Console.WriteLine("  look [target] - Look around or at specific target");
-        Console.WriteLine("  help - Show this help message");
-        
+        ShowAvailableCommands();
         return context;
     }
 
@@ -404,17 +396,15 @@ public class FightCommand : ICommand
         Console.WriteLine("\n--- Your Turn ---");
         return context;
     }
-
-    // Helper method to show available commands
-    // Helper method to show available commands
+    
     // Helper method to show available commands
     private void ShowAvailableCommands()
     {
         Console.WriteLine("Available commands:");
         Console.WriteLine("  (a)ttack [target] - Attack a creature");
         Console.WriteLine("  (d)efend - Raise your guard");
-        Console.WriteLine("  (u)se item [item] - Use an item from inventory");
-        Console.WriteLine("  use (ab)ility [ability] - Use one of the player's abilities [attack, heal, run]");
+        Console.WriteLine("  (i)tem [item] - Use an item from inventory");
+        Console.WriteLine("  (ab)ility [ability] - Use one of the player's abilities [attack, heal, run]");
         Console.WriteLine("  (l)ook [target] - Look around or at specific target");
         Console.WriteLine("  (h)elp - Show help message");
     }
