@@ -3,6 +3,7 @@
 using The_World.GameData.Creatures;
 using The_World.GameData.GameMechanics;
 using The_World.GameData.Effects;
+using The_World.GameData.Equipment;
 
 namespace The_World.GameData.Abilities;
 

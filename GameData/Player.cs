@@ -1,3 +1,4 @@
+using The_World.GameData.Equipment;
 using The_World.GameData.Items;
 namespace The_World.GameData;
 
@@ -23,6 +24,11 @@ public record Player(
     /// The Player's currency for trading with merchants
     /// </summary>
     public Currency Money { get; private set; } = Money;
+    
+    /// <summary>
+    /// Lets the Player equip armor and weapons
+    /// </summary>
+    public EquipmentManager Equipment { get; private set; } = new();
 
     /// <summary>
     /// Encapsulate the ability to Add experience to the Player's level.

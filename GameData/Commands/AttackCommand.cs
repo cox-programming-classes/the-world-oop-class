@@ -2,6 +2,7 @@
 using The_World.GameData.GameMechanics;
 using The_World.GameData.Abilities;
 using The_World.GameData.Creatures;
+using The_World.GameData.Equipment;
 
 namespace The_World.GameData.Commands;
 
@@ -34,16 +35,12 @@ public class AttackCommand : ICommand
 
         }
 
-        attack.Use(context, targetCreature);
-
-        //TODO: figure out how to make this say how much damage the player dealt
-        Console.WriteLine($"You dealt [????] damage to the {_creatureName}!");
-
         // Your existing damage calculation
         var randomNumber = Dice.D6.Roll();
         var playerLevel = context.Player.Level;
         var creatureLevel = targetCreature.Level;
-        var baseDamage = Math.Pow(2, (randomNumber * 2 - (creatureLevel - playerLevel)));
+        var equipmentBuff = context.Player.Equipment.GetTotalAttack();
+        var baseDamage = Math.Pow(2, (randomNumber * 2 - (creatureLevel - playerLevel))) + equipmentBuff;
 
         // Apply level difference modifier
         var levelDifference = creatureLevel - playerLevel;

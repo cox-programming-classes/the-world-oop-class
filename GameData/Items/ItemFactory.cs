@@ -10,7 +10,7 @@ public static class ItemFactory
         string description = "Give your enemies tetanus with this one simple trick!",
         double weight = 3.5,
         int attackpower = 3,
-        int durability = 10)
+         int durability = 10)
     {
         return Item.CreateWeapon(name, description, weight, attackpower, durability);
     }

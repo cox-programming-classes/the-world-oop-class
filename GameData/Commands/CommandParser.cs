@@ -13,6 +13,7 @@ public class CommandParser : IParser
             ["look"] = arg => new LookCommand(arg),
             ["go"] = arg => new GoCommand(arg),
             ["get"] = arg => new GetCommand(arg),
+            ["equip"] = arg => new EquipCommand(arg),
             ["inventory"] = _ => new InventoryCommand(),
             ["attack"] = arg => new AttackCommand(arg),     
             ["use"] = arg => new UseCommand(arg),          
